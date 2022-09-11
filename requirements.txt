@@ -1,0 +1,8 @@
+tensorflow
+tensorflow-io
+tensorflow_hub
+mediapy
+matplotlib
+numpy
+tqdm
+pillow
