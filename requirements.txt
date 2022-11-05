@@ -1,8 +1,9 @@
-tensorflow
+tensorflow~=2.10.0
 tensorflow-io
 tensorflow_hub
-mediapy
-matplotlib
-numpy
-tqdm
-pillow
+matplotlib~=3.5.3
+numpy~=1.23.3
+tqdm~=4.64.1
+pillow~=9.1.0
+boto3~=1.24.75
+botocore~=1.27.75
