@@ -11,7 +11,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Install wget, python, pip & ffmpeg
 RUN apt-get update
-RUN apt-get install wget python3 python3-pip ffmpeg -y
+RUN apt-get install python3 python3-pip ffmpeg -y
 
 # Update pipe
 RUN python3 -m pip install --upgrade pip
@@ -32,11 +32,13 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # Copy script source
-COPY src .
+COPY src src/
 
 # Copy Kinetics 600 label map/usr/bin/python3
 # RUN wget https://raw.githubusercontent.com/tensorflow/models/f8af2291cced43fc9f1d9b41ddbf772ae7b0d7d2/official/projects/movinet/files/kinetics_600_labels.txt -O "${WORKING_DIR}/labels.txt" -q
 COPY kinetics_600_labels.txt .
 
+ENV PYTHONPATH "${WORKING_DIR}/src"
+
 # Run main script
-ENTRYPOINT [ "/usr/bin/python3", "src/app.py" ]
+ENTRYPOINT [ "/usr/bin/python3", "-m", "src.app" ]

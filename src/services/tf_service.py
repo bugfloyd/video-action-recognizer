@@ -2,7 +2,7 @@ import tensorflow as tf
 import tensorflow_io as tfio
 import tensorflow_hub as hub
 import os
-from ..config import working_dir
+from config import working_dir
 
 with tf.io.gfile.GFile(F'{working_dir}/kinetics_600_labels.txt') as f:
     lines = f.readlines()

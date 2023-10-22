@@ -1,8 +1,7 @@
 import boto3
-# import botocore
 import os
-from ..config import s3_access_key_id, s3_secret_access_key, s3_endpoint_url, working_dir, environment
-from ..utils import logger
+from config import s3_access_key_id, s3_secret_access_key, s3_endpoint_url, working_dir, environment
+from utils import logger
 
 
 if environment == "localhost":

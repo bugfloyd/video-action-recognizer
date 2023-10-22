@@ -1,7 +1,7 @@
-from bin.services.tf_service import run_prediction
-from bin.config import video_s3_bucket, video_s3_key
-from bin.services.s3_service import download_video
-from bin.utils import logger
+from services.tf_service import run_prediction
+from config import video_s3_bucket, video_s3_key
+from services.s3_service import download_video
+from utils import logger
 
 # Show video
 # print(video.shape)
