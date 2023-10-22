@@ -2,7 +2,7 @@
 ARG WORKING_DIR="/tmp/video_recognition"
 
 # Define function base image
-ARG BASE_IMAGE=ubuntu:20.04
+ARG BASE_IMAGE=ubuntu:22.04
 FROM $BASE_IMAGE
 
 # Set timezone
@@ -33,8 +33,9 @@ RUN pip install -r requirements.txt
 # Copy script source
 COPY src .
 
-# Download Kinetics 600 label map/usr/bin/python3
-RUN wget https://raw.githubusercontent.com/tensorflow/models/f8af2291cced43fc9f1d9b41ddbf772ae7b0d7d2/official/projects/movinet/files/kinetics_600_labels.txt -O "${WORKING_DIR}/labels.txt" -q
+# Copy Kinetics 600 label map/usr/bin/python3
+# RUN wget https://raw.githubusercontent.com/tensorflow/models/f8af2291cced43fc9f1d9b41ddbf772ae7b0d7d2/official/projects/movinet/files/kinetics_600_labels.txt -O "${WORKING_DIR}/labels.txt" -q
+COPY kinetics_600_labels.txt "${WORKING_DIR}/labels.txt"
 
 # Run main script
 ENTRYPOINT [ "/usr/bin/python3", "src/app.py" ]
