@@ -4,7 +4,7 @@ import tensorflow_hub as hub
 import os
 from ..config import working_dir
 
-with tf.io.gfile.GFile(F'{working_dir}/labels.txt') as f:
+with tf.io.gfile.GFile(F'{working_dir}/kinetics_600_labels.txt') as f:
     lines = f.readlines()
     KINETICS_600_LABELS_LIST = [line.strip() for line in lines]
     KINETICS_600_LABELS = tf.constant(KINETICS_600_LABELS_LIST)

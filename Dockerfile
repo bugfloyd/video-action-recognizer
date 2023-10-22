@@ -1,5 +1,5 @@
 # Define working directory
-ARG WORKING_DIR="/tmp/video_recognition"
+ARG WORKING_DIR="/tmp/video-action-recognizer"
 
 # Define function base image
 ARG BASE_IMAGE=ubuntu:22.04
@@ -18,6 +18,7 @@ RUN python3 -m pip install --upgrade pip
 
 # Include global arg in this stage of the build
 ARG WORKING_DIR
+ENV WORKING_DIR=$WORKING_DIR
 
 # Create working and videos directories
 RUN mkdir -p ${WORKING_DIR}
@@ -35,8 +36,7 @@ COPY src .
 
 # Copy Kinetics 600 label map/usr/bin/python3
 # RUN wget https://raw.githubusercontent.com/tensorflow/models/f8af2291cced43fc9f1d9b41ddbf772ae7b0d7d2/official/projects/movinet/files/kinetics_600_labels.txt -O "${WORKING_DIR}/labels.txt" -q
-COPY kinetics_600_labels.txt "${WORKING_DIR}/labels.txt"
+COPY kinetics_600_labels.txt .
 
 # Run main script
 ENTRYPOINT [ "/usr/bin/python3", "src/app.py" ]
-

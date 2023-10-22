@@ -3,8 +3,8 @@ version: '3.7'
 services:
   minio:
     image: minio/minio:RELEASE.2023-10-16T04-13-43Z
-    hostname: 'vr-s3'
-    container_name: 'vr-minio'
+    hostname: 'var-s3'
+    container_name: 'var-minio'
     volumes:
       - 'minio_data:/data'
     ports:
@@ -21,19 +21,20 @@ services:
       timeout: 20s
       retries: 3
 
-  video-recognition:
+  video-action-recognizer:
     build:
       context: .
       dockerfile: Dockerfile
+    hostname: 'var-app'
     environment:
       ENV: localhost
       S3_ACCESS_KEY_ID: minioAdmin
       S3_SECRET_ACCESS_KEY: minioPassword
-      S3_ENDPOINT_URL: http://vr-s3:9000
-      VIDEO_S3_BUCKET: video-recognition
+      S3_ENDPOINT_URL: http://var-s3:9000
+      VIDEO_S3_BUCKET: video-action-recognizer
       VIDEO_S3_KEY: video.mp4
     volumes:
-      - './src:/tmp/video_recognition/src'
+      - './src:/tmp/video-action-recognizer/src'
 
 volumes:
     minio_data:

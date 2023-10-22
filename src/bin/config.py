@@ -1,9 +1,7 @@
 from os import getenv
 
-working_dir = "/tmp/video_recognition"
-
+working_dir = getenv("WORKING_DIR")
 environment = getenv("ENV")
-# api_host = getenv("API_HOST")
 video_s3_bucket = getenv("VIDEO_S3_BUCKET")
 video_s3_key = getenv("VIDEO_S3_KEY")
 s3_access_key_id = getenv("S3_ACCESS_KEY_ID")
