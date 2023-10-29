@@ -6,3 +6,5 @@ numpy~=1.26.1
 tqdm~=4.66.1
 pillow~=10.1.0
 boto3~=1.28.68
+imageio
+imageio[ffmpeg]
