@@ -4,7 +4,5 @@ tensorflow_hub~=0.15.0
 matplotlib~=3.8.0
 numpy~=1.26.1
 tqdm~=4.66.1
-pillow~=10.1.0
 boto3~=1.28.68
-imageio
-imageio[ffmpeg]
+imageio[ffmpeg]~=2.31.6

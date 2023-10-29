@@ -43,10 +43,22 @@ class VideoPredictor:
             )
 
     def load_movinet_from_hub(self, model_id, model_mode, hub_version=3):
-        """Loads a MoViNet model from TF Hub."""
-        hub_url = f"https://tfhub.dev/tensorflow/movinet/{model_id}/{model_mode}/kinetics-600/classification/{hub_version}"
+        """Loads a MoViNet model either from the cache or TF Hub."""
 
-        encoder = hub.KerasLayer(hub_url, trainable=True)
+        # Designated cache location
+        cache_path = f"{working_dir}/models/{model_mode}"
+
+        # Load model from cache if it exists
+        if os.path.exists(cache_path):
+            logger.log_info(f"Found the {model_mode} model in cache: {cache_path}")
+            hub_path = cache_path
+        else:
+            logger.log_warning(
+                f"Couln't find the model {model_mode} in cache. Loading from TF hub."
+            )
+            hub_path = f"https://tfhub.dev/tensorflow/movinet/{model_id}/{model_mode}/kinetics-600/classification/{hub_version}"
+
+        encoder = hub.KerasLayer(hub_path, trainable=True)
 
         # Define the image (video) input
         image_input = tf.keras.layers.Input(
