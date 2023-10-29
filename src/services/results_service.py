@@ -1,9 +1,13 @@
+import os
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import tqdm
 import tensorflow as tf
+from utils import logger
+from config import working_dir
+import imageio
 
 
 class ResultsService:
@@ -176,3 +180,18 @@ class ResultsService:
         image = np.array(image)
 
         return image, (fig, ax, ax2)
+
+    def generate_stream_output(self, input_video_s3_key):
+        logger.log_info(f"Generating video file from the streaming plot")
+        local_file_path = (
+            f"{working_dir}/videos/output_{os.path.basename(input_video_s3_key)}"
+        )
+        plot_video = self.plot_streaming_top_preds()
+
+        # Convert the numpy array of images into a video and save it to the file system
+        imageio.mimsave(
+            local_file_path, plot_video, fps=25
+        )  # Set fps to desired frames per second
+        logger.log_info(f"Stored {local_file_path}")
+
+        return local_file_path

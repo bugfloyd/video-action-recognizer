@@ -76,17 +76,19 @@ class VideoPredictor:
         outputs = encoder(inputs)
 
         model = tf.keras.Model(inputs, outputs, name="movinet")
-        model.build([1, 1, 1, 1, 3])  # ToDo ??
+        model.build([1, 1, 1, 1, 3])
         self.model = model
 
     def predict_top_k(self):
+        """Outputs the top k model labels and probabilities on the given video."""
+
         if self.model_type == "base":
-            """Outputs the top k model labels and probabilities on the given video."""
+            logger.log_info("Running the base model over the whole video...")
             outputs = self.model.predict(self.video[tf.newaxis])[0]
             self.probs = tf.nn.softmax(outputs)
             return self.get_top_k(self.probs)
         else:
-            # init_states = self.model.init_states(self.video[tf.newaxis].shape)
+            logger.log_info("Running the stream model for frame by frame analysis...")
             init_states = self.init_states_fn(tf.shape(self.video[tf.newaxis]))
             images = tf.split(self.video[tf.newaxis], self.video.shape[0], axis=1)
 
@@ -104,17 +106,6 @@ class VideoPredictor:
             self.probs = tf.nn.softmax(logits, axis=-1)
             final_probs = self.probs[-1]
             return self.get_top_k(final_probs)
-            # print(self.probs)
-
-            # Initialize the dict of states. All state tensors are initially zeros.
-            # init_states = self.init_states_fn(tf.shape(input))
-
-            # Run the network on the entire input video.
-            # non_streaming_output, _ = self.model.predict(
-            #     {**init_states, "image": input}
-            # )
-            # non_streaming_prediction = tf.argmax(non_streaming_output, -1)
-            # print(non_streaming_prediction)
 
     def get_top_k(self, probs):
         """Outputs the top k model labels and probabilities on the given video."""
