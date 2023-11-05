@@ -7,5 +7,5 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  analysis_core_container_name = "analysis-core"
+  analysis_core_container_name = "main"
 }

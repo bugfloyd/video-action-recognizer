@@ -15,7 +15,7 @@ resource "aws_lambda_function" "upload_listener_lambda" {
       ANALYSIS_CORE_ECS_CLUSTER         = aws_ecs_cluster.analysis_core_cluster.name
       ANALYSIS_CORE_SUBNET_ID_1         = aws_subnet.private_subnet_az1.id
       ANALYSIS_CORE_SUBNET_ID_2         = aws_subnet.private_subnet_az2.id
-      ANALYSIS_CORE_SECURITY_GROUP      = aws_security_group.analysis_core_task_sg.id
+      ANALYSIS_CORE_SECURITY_GROUP      = aws_security_group.analysis_core_sg.id
       ANALYSIS_CORE_CONTAINER_NAME      = local.analysis_core_container_name
     }
   }
@@ -122,22 +122,5 @@ resource "aws_s3_bucket_notification" "input_bucket_notification" {
     events              = ["s3:ObjectCreated:*"]
     filter_prefix       = ""
     filter_suffix       = ".gif"
-  }
-}
-
-
-# Security group for Lambda functions
-resource "aws_security_group" "upload_listener_lambda_sg" {
-  vpc_id      = aws_vpc.custom_vpc.id
-  description = "Security group for Lambda functions"
-
-  egress {
-    from_port       = 443
-    to_port         = 443
-    protocol        = "tcp"
-    prefix_list_ids = [aws_vpc_endpoint.s3.prefix_list_id]
-  }
-  tags = {
-    Name = "LambdaSG"
   }
 }

@@ -142,19 +142,3 @@ resource "aws_iam_role_policy_attachment" "analysis_core_s3_access_attachment" {
   role       = aws_iam_role.analysis_core_ecs_task_role.name
   policy_arn = aws_iam_policy.analysis_core_s3_access.arn
 }
-
-# Security group for ECS task
-resource "aws_security_group" "analysis_core_task_sg" {
-  vpc_id      = aws_vpc.custom_vpc.id
-  description = "Security group for ECS tasks"
-
-  egress {
-    from_port       = 443
-    to_port         = 443
-    protocol        = "tcp"
-    prefix_list_ids = [aws_vpc_endpoint.s3.prefix_list_id]
-  }
-  tags = {
-    Name = "ECSTaskSG"
-  }
-}
