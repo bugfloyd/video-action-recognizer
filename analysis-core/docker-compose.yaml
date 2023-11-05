@@ -33,7 +33,7 @@ services:
       S3_ENDPOINT_URL: http://var-s3:9000
       s3_region: eu-west-1
       VIDEO_S3_BUCKET: video-action-recognizer
-      VIDEO_S3_KEY: video.mp4
+      VIDEO_S3_KEY: videos/video.mp4
     volumes:
       - './src:/tmp/video-action-recognizer/src'
 
