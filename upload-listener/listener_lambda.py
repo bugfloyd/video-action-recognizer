@@ -26,7 +26,6 @@ def lambda_handler(event, context):
                         os.environ["ANALYSIS_CORE_SUBNET_ID_2"],
                     ],
                     "securityGroups": [os.environ["ANALYSIS_CORE_SECURITY_GROUP"]],
-                    "assignPublicIp": "ENABLED",
                 }
             },
             overrides={
