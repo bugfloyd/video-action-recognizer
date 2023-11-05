@@ -35,26 +35,57 @@ resource "aws_ecs_cluster" "analysis_core_cluster" {
   name = "analysis-core"
 }
 
+resource "aws_cloudwatch_log_group" "analysis_core_ecs_log_group" {
+  name = "/ecs/analysis-core"
+}
+
+
 # Task Definition
 resource "aws_ecs_task_definition" "analysis_core_task" {
   family                   = "analysis-core"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  execution_role_arn       = aws_iam_role.analysis_core_ecs_execution_role.arn
+  execution_role_arn       = aws_iam_role.ecs_execution_role.arn
   task_role_arn            = aws_iam_role.analysis_core_ecs_task_role.arn
   cpu                      = 1024
   memory                   = 2048
   container_definitions = jsonencode([
     {
-      name  = "analysis-core"
+      name  = local.analysis_core_container_name
       image = "${aws_ecr_repository.analysis_core_repository.repository_url}:latest"
+      environment = [
+        {
+          name  = "INPUT_VIDEO_S3_BUCKET",
+          value = aws_s3_bucket.input_bucket.id
+        },
+        {
+          name  = "INPUT_VIDEO_S3_KEY",
+          value = ""
+        },
+        {
+          name  = "S3_REGION",
+          value = var.aws_region
+        },
+        {
+          name  = "OUTPUT_VIDEO_S3_BUCKET",
+          value = aws_s3_bucket.output_bucket.id
+        },
+      ],
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.analysis_core_ecs_log_group.name
+          awslogs-region        = var.aws_region
+          awslogs-stream-prefix = "ecs"
+        }
+      }
     }
   ])
 }
 
 # Execution Role: Used by ECS while running a task 
-resource "aws_iam_role" "analysis_core_ecs_execution_role" {
-  name = "analysis_core_ecs_execution_role"
+resource "aws_iam_role" "ecs_execution_role" {
+  name = "ecs_execution_role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -64,15 +95,14 @@ resource "aws_iam_role" "analysis_core_ecs_execution_role" {
         Principal = {
           Service = "ecs-tasks.amazonaws.com"
         }
-      },
+      }
     ]
   })
 }
-resource "aws_iam_role_policy_attachment" "ecs_execution_role_policy_attachment" {
-  role       = aws_iam_role.analysis_core_ecs_execution_role.name
+resource "aws_iam_role_policy_attachment" "ecs_execution_role_default_policy_attachment" {
+  role       = aws_iam_role.ecs_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
-
 
 # Task Role: Applied to task containers
 resource "aws_iam_role" "analysis_core_ecs_task_role" {
@@ -111,4 +141,20 @@ resource "aws_iam_policy" "analysis_core_s3_access" {
 resource "aws_iam_role_policy_attachment" "analysis_core_s3_access_attachment" {
   role       = aws_iam_role.analysis_core_ecs_task_role.name
   policy_arn = aws_iam_policy.analysis_core_s3_access.arn
+}
+
+# Security group for ECS task
+resource "aws_security_group" "analysis_core_task_sg" {
+  vpc_id      = aws_vpc.custom_vpc.id
+  description = "Security group for ECS tasks"
+
+  egress {
+    from_port       = 443
+    to_port         = 443
+    protocol        = "tcp"
+    prefix_list_ids = [aws_vpc_endpoint.s3.prefix_list_id]
+  }
+  tags = {
+    Name = "ECSTaskSG"
+  }
 }

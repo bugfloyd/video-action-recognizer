@@ -37,3 +37,8 @@ resource "aws_s3_bucket_policy" "output_bucket_policy" {
     ],
   })
 }
+
+# S3 bucket to store lambda function codes
+resource "aws_s3_bucket" "lambda_bucket" {
+  bucket = var.lambda_bucket
+}

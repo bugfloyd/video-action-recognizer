@@ -30,38 +30,6 @@ resource "aws_subnet" "private_subnet_az2" {
   }
 }
 
-# Security group for Lambda functions
-resource "aws_security_group" "lambda_sg" {
-  vpc_id      = aws_vpc.custom_vpc.id
-  description = "Security group for Lambda functions"
-
-  egress {
-    from_port       = 443
-    to_port         = 443
-    protocol        = "tcp"
-    prefix_list_ids = [aws_vpc_endpoint.s3.prefix_list_id]
-  }
-  tags = {
-    Name = "LambdaSG"
-  }
-}
-
-# Security group for ECS task
-resource "aws_security_group" "ecs_task_sg" {
-  vpc_id      = aws_vpc.custom_vpc.id
-  description = "Security group for ECS tasks"
-
-  egress {
-    from_port       = 443
-    to_port         = 443
-    protocol        = "tcp"
-    prefix_list_ids = [aws_vpc_endpoint.s3.prefix_list_id]
-  }
-  tags = {
-    Name = "ECSTaskSG"
-  }
-}
-
 # S3 VPC Endpoint for private access to S3 within the VPC
 resource "aws_vpc_endpoint" "s3" {
   vpc_id            = aws_vpc.custom_vpc.id
@@ -76,6 +44,36 @@ resource "aws_vpc_endpoint" "s3" {
   tags = {
     Name = "S3VpcEndpoint"
   }
+}
+
+# ECR API endpoint
+resource "aws_vpc_endpoint" "ecr_api" {
+  vpc_id             = aws_vpc.custom_vpc.id
+  service_name       = "com.amazonaws.${var.aws_region}.ecr.api"
+  vpc_endpoint_type  = "Interface"
+  subnet_ids         = [aws_subnet.private_subnet_az1.id, aws_subnet.private_subnet_az2.id]
+  security_group_ids = [aws_security_group.ecr_sg.id]
+
+  private_dns_enabled = true
+}
+
+# ECR Docker endpoint
+resource "aws_vpc_endpoint" "ecr_dkr" {
+  vpc_id             = aws_vpc.custom_vpc.id
+  service_name       = "com.amazonaws.${var.aws_region}.ecr.dkr"
+  vpc_endpoint_type  = "Interface"
+  subnet_ids         = [aws_subnet.private_subnet_az1.id, aws_subnet.private_subnet_az2.id]
+  security_group_ids = [aws_security_group.ecr_sg.id]
+
+  private_dns_enabled = true
+}
+
+# Security group for the ECR VPC endpoints
+resource "aws_security_group" "ecr_sg" {
+  name   = "ecr_vpc_endpoint_sg"
+  vpc_id = aws_vpc.custom_vpc.id
+
+  # Add rules that allow inbound and outbound traffic necessary for ECR
 }
 
 # Route table associated with the private subnets

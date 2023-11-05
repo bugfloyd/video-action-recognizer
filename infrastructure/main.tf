@@ -5,3 +5,7 @@ provider "aws" {
 data "aws_availability_zones" "available" {
   state = "available"
 }
+
+locals {
+  analysis_core_container_name = "analysis-core"
+}
