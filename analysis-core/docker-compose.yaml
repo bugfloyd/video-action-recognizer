@@ -31,9 +31,10 @@ services:
       S3_ACCESS_KEY_ID: minioAdmin
       S3_SECRET_ACCESS_KEY: minioPassword
       S3_ENDPOINT_URL: http://var-s3:9000
-      s3_region: eu-west-1
-      VIDEO_S3_BUCKET: video-action-recognizer
-      VIDEO_S3_KEY: videos/video.mp4
+      S3_REGION: eu-west-1
+      INPUT_VIDEO_S3_BUCKET: video-action-recognizer
+      INPUT_VIDEO_S3_KEY: videos/video.mp4
+      OUTPUT_VIDEO_S3_BUCKET: video-action-recognizer
     volumes:
       - './src:/tmp/video-action-recognizer/src'
 
