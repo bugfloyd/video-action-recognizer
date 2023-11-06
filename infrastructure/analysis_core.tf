@@ -47,8 +47,8 @@ resource "aws_ecs_task_definition" "analysis_core_task" {
   requires_compatibilities = ["FARGATE"]
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
   task_role_arn            = aws_iam_role.analysis_core_ecs_task_role.arn
-  cpu                      = 1024
-  memory                   = 2048
+  cpu                      = 4096
+  memory                   = 10240
   container_definitions = jsonencode([
     {
       name  = local.analysis_core_container_name
