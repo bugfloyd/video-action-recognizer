@@ -102,7 +102,7 @@ const SignIn: React.FunctionComponent<{}> = () => {
               </Grid>
             </Box>
             <Box mt={2}>
-              <Box onClick={() => navigate('signup')}>
+              <Box onClick={() => navigate('/signup')}>
                 <TypographyWithHover variant="body1">
                   Register a new account
                 </TypographyWithHover>
