@@ -1,35 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import React from 'react'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+import { HashRouter as Router, Route, Routes } from 'react-router-dom'
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles'
+import CssBaseline from '@mui/material/CssBaseline'
+
+import AuthProvider, { AuthIsSignedIn, AuthIsNotSignedIn } from './contexts/authContext'
+
+import SignIn from './routes/auth/signIn'
+import SignUp from './routes/auth/signUp'
+import VerifyCode from './routes/auth/verify'
+import RequestCode from './routes/auth/requestCode'
+import ForgotPassword from './routes/auth/forgotPassword'
+import ChangePassword from './routes/auth/changePassword'
+import Landing from './routes/landing'
+import Home from './routes/home'
+
+let lightTheme = createTheme({
+  palette: {
+    mode: 'light',
+  },
+})
+lightTheme = responsiveFontSizes(lightTheme)
+
+// let darkTheme = createTheme({
+//   palette: {
+//     mode: 'dark',
+//   },
+// })
+// darkTheme = responsiveFontSizes(darkTheme)
+
+const SignInRoute: React.FunctionComponent = () => (
+  <Router>
+    <Routes>
+      <Route path="/signin" element={<SignIn />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/verify" element={<VerifyCode />} />
+      <Route path="/requestcode" element={<RequestCode />} />
+      <Route path="/forgotpassword" element={<ForgotPassword />} />
+      <Route path="/" element={<Landing />} />
+    </Routes>
+  </Router>
+)
+
+const MainRoute: React.FunctionComponent = () => (
+  <Router>
+    <Routes>
+      <Route path="/changepassword" element={<ChangePassword />} />
+      <Route path="/" element={<Home />} />
+    </Routes>
+  </Router>
+)
+
+const App: React.FunctionComponent = () => (
+  <ThemeProvider theme={lightTheme}>
+    <CssBaseline />
+    <AuthProvider>
+      <AuthIsSignedIn>
+        <MainRoute />
+      </AuthIsSignedIn>
+      <AuthIsNotSignedIn>
+        <SignInRoute />
+      </AuthIsNotSignedIn>
+    </AuthProvider>
+  </ThemeProvider>
+)
 
 export default App
