@@ -50,7 +50,7 @@ const SignIn: React.FunctionComponent<{}> = () => {
   }
 
   const passwordResetClicked = async () => {
-    navigate('requestcode')
+    navigate('/requestcode')
   }
 
   return (

@@ -49,7 +49,7 @@ export default function RequestCode() {
         <TypographyWithCenterText variant="h5">{`Reset Code Sent to ${username}`}</TypographyWithCenterText>
       </Box>
       <Box mt={4}>
-        <Button onClick={() => navigate('forgotpassword')} color="primary" variant="contained">
+        <Button onClick={() => navigate('/forgotpassword')} color="primary" variant="contained">
           Reset Password
         </Button>
       </Box>
