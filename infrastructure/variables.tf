@@ -23,3 +23,7 @@ variable "upload_listener_lambda_bundle_sha" {
   type        = string
 }
 
+variable "cognito_domain_prefix" {
+  description = "The prefix for the Amazon Cognito domain."
+  type        = string
+}
