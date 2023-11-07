@@ -5,7 +5,7 @@ resource "aws_lambda_function" "upload_listener_lambda" {
   runtime       = "python3.9"
 
   # Assume you have packaged your Lambda function code into a ZIP file and have uploaded it to S3
-  s3_bucket        = aws_s3_bucket.lambda_bucket.id
+  s3_bucket        = var.lambda_bucket
   s3_key           = "upload_listener/latest/function.zip"
   source_code_hash = var.upload_listener_lambda_bundle_sha
 

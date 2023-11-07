@@ -35,6 +35,7 @@ Navigate to the `infrastructure/setup` directory and create a `terraform.tfvars`
 ```hcl
 aws_region             = "<AWS_REGION>"
 terraform_state_bucket = "<TERRAFORM_STATE_BUCKET_NAME>"
+lambda_bucket          = "<LAMBDA_BUCKET_NAME>"
 ```
 
 Initialize Terraform:
@@ -49,6 +50,38 @@ Deploy the resources:
 terraform plan -out setup.tfplan
 terraform apply "setup.tfplan"
 ```
+
+### Listener Lambda
+
+Navigate to the `upload-listener` directory:
+
+```bash
+cd upload-listener
+```
+
+Package and deploy the Lambda function:
+
+```bash
+rm -rf ./package && rm -rf ./build
+mkdir -p ./package && mkdir -p ./build
+cp listener_lambda.py ./package/
+python -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt -t ./package
+cd ./package
+zip -r9 ../build/upload_listener.zip .
+cd ..
+rm -rf ./package
+deactivate
+
+aws s3 cp build/upload_listener.zip \\
+s3://<LAMBDA_BUCKET_NAME>/upload_listener/latest/function.zip
+
+shasum -a 256 build/upload_listener.zip | awk '{print $1}' | xxd -r -p | base64
+```
+
+Otaining the SHA sum and use it in the Main Infrastructure section.
 
 ### Main Infrastructure
 
@@ -110,42 +143,13 @@ docker push <ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/video-action-regogni
 docker push <ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/video-action-regognizer:latest
 ```
 
-### Listener Lambda
-
-Navigate to the `upload-listener` directory:
-
-```bash
-cd upload-listener
-```
-
-Package and deploy the Lambda function:
-
-```bash
-rm -rf ./package && rm -rf ./build
-mkdir -p ./package && mkdir -p ./build
-cp listener_lambda.py ./package/
-python -m venv venv
-source venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt -t ./package
-cd ./package
-zip -r9 ../build/upload_listener.zip .
-cd ..
-rm -rf ./package
-deactivate
-
-aws s3 cp build/upload_listener.zip \\
-s3://<LAMBDA_BUCKET_NAME>/upload_listener/latest/function.zip
-
-shasum -a 256 build/upload_listener.zip | awk '{print $1}' | xxd -r -p | base64
-```
-
-After obtaining the SHA sum, update the `upload_listener_lambda_bundle_sha` in `terraform.tfvars` with the new value.
+## Updating resources
 
 To update the Lambda function:
 
-1. Replace the `upload_listener_lambda_bundle_sha` in `terraform.tfvars` with the newly obtained SHA sum.
-2. Apply the changes using Terraform:
+1. Re-run the code to build and upload the listener lambda function.
+2. Replace the `upload_listener_lambda_bundle_sha` in `terraform.tfvars` with the newly obtained SHA sum.
+3. Apply the changes using Terraform:
 
 ```bash
 terraform plan -out main.tfplan

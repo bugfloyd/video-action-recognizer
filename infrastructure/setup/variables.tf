@@ -19,3 +19,8 @@ variable "terraform_state_lock_dynamodb_table" {
   type        = string
   default     = "var-terraform-state-lock"
 }
+
+variable "lambda_bucket" {
+  description = "The AWS S3 bucket for storing lambda function codes"
+  type        = string
+}
