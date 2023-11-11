@@ -100,6 +100,7 @@ input_bucket                      = "<INPUT_BUCKET_NAME>"
 output_bucket                     = "<OUTPUT_BUCKET_NAME>"
 lambda_bucket                     = "<LAMBDA_BUCKET_NAME>"
 upload_listener_lambda_bundle_sha = "<LAMBDA_BUNDLE_SHA>"
+cognito_domain_prefix             = "<AWS_COGNITO_DOMAIN_PREFIX>"
 ```
 
 Initialize Terraform with the S3 backend:
