@@ -2,19 +2,20 @@
 ARG WORKING_DIR="/tmp/video-action-recognizer"
 
 # Define function base image
-ARG BASE_IMAGE=ubuntu:22.04
+ARG BASE_IMAGE=python:3.9-slim-bullseye
 FROM $BASE_IMAGE
 
 # Set timezone
 ENV TZ=Europe/Amsterdam
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Install wget, python, pip & ffmpeg
-RUN apt-get update
-RUN apt-get install python3 python3-pip ffmpeg -y
+# Install ffmpeg
+RUN apt-get update && apt-get install ffmpeg -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Update pipe
-RUN python3 -m pip install --upgrade pip
+RUN python -m pip install --upgrade pip
 
 # Include global arg in this stage of the build
 ARG WORKING_DIR
@@ -48,4 +49,4 @@ COPY src src/
 ENV PYTHONPATH "${WORKING_DIR}/src"
 
 # Run main script
-ENTRYPOINT [ "/usr/bin/python3", "-m", "src.app" ]
+ENTRYPOINT [ "python", "-m", "src.app" ]
