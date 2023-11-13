@@ -133,14 +133,12 @@ docker login --username AWS --password-stdin \
 ```
 
 ```bash
-docker build \
--t <ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/video-action-regognizer:<TAG> \
+docker buildx build --platform=linux/amd64 -t \
 -t <ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/video-action-regognizer:latest \
 .
 ```
 
 ```bash
-docker push <ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/video-action-regognizer:<TAG>
 docker push <ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/video-action-regognizer:latest
 ```
 
