@@ -75,7 +75,7 @@ cd ..
 rm -rf ./package
 deactivate
 
-aws s3 cp build/upload_listener.zip \\
+aws s3 cp build/upload_listener.zip \
 s3://<LAMBDA_BUCKET_NAME>/upload_listener/latest/function.zip
 
 shasum -a 256 build/upload_listener.zip | awk '{print $1}' | xxd -r -p | base64

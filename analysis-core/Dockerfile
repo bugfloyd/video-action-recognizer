@@ -10,7 +10,7 @@ ENV TZ=Europe/Amsterdam
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Install ffmpeg
-RUN apt-get update && apt-get install ffmpeg -y \
+RUN apt-get update && apt-get install ffmpeg gcc -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
