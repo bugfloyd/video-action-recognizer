@@ -3,7 +3,7 @@ ARG WORKING_DIR="/tmp/video-action-recognizer"
 
 # Define function base image
 ARG BASE_IMAGE=python:3.9-slim-bullseye
-FROM $BASE_IMAGE
+FROM --platform=linux/amd64 $BASE_IMAGE
 
 # Set timezone
 ENV TZ=Europe/Amsterdam
