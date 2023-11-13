@@ -51,7 +51,11 @@ resource "aws_ecs_task_definition" "analysis_core_task" {
   memory                   = 10240
   container_definitions = jsonencode([
     {
-      name  = local.analysis_core_container_name
+      name = local.analysis_core_container_name
+      runtimePlatform = {
+        cpuArchitecture       = "amd64"
+        operatingSystemFamily = "LINUX"
+      }
       image = "${aws_ecr_repository.analysis_core_repository.repository_url}:latest"
       environment = [
         {
