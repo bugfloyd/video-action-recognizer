@@ -133,7 +133,7 @@ docker login --username AWS --password-stdin \
 ```
 
 ```bash
-docker buildx build --platform=linux/amd64 -t \
+docker buildx build --platform=linux/amd64 \
 -t <ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/video-action-regognizer:latest \
 .
 ```
