@@ -57,6 +57,20 @@ resource "aws_cognito_user_pool_client" "main" {
   logout_urls                          = ["http://localhost"]
 }
 
+# Create Admin Group in Cognito
+resource "aws_cognito_user_group" "admin_group" {
+  name         = "Admins"
+  user_pool_id = aws_cognito_user_pool.main.id
+  precedence   = 1
+}
+
+# Create User Group in Cognito
+resource "aws_cognito_user_group" "user_group" {
+  name         = "Users"
+  user_pool_id = aws_cognito_user_pool.main.id
+  precedence   = 2
+}
+
 # resource "aws_cognito_identity_provider" "google" {
 #   user_pool_id  = aws_cognito_user_pool.main.id
 #   provider_name = "Google"
@@ -75,6 +89,7 @@ resource "aws_cognito_user_pool_client" "main" {
 #     "given_name" = "given_name",
 #   }
 # }
+
 
 # Output the Cognito User Pool ID and Cognito User Pool Client ID
 output "cognito_user_pool_id" {
