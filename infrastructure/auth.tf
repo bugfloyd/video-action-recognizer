@@ -51,10 +51,15 @@ resource "aws_cognito_user_pool_client" "main" {
   user_pool_id                         = aws_cognito_user_pool.main.id
   generate_secret                      = false
   allowed_oauth_flows_user_pool_client = true
-  allowed_oauth_flows                  = ["code", "implicit"]
+  allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes                 = ["openid", "phone", "email", "profile"]
   callback_urls                        = ["http://localhost"]
   logout_urls                          = ["http://localhost"]
+  explicit_auth_flows = [
+    "ALLOW_USER_SRP_AUTH",
+    "ALLOW_REFRESH_TOKEN_AUTH"
+  ]
+  supported_identity_providers = ["COGNITO"]
 }
 
 # Create Admin Group in Cognito
@@ -70,6 +75,23 @@ resource "aws_cognito_user_group" "user_group" {
   user_pool_id = aws_cognito_user_pool.main.id
   precedence   = 2
 }
+
+resource "aws_cognito_resource_server" "main_backend" {
+  user_pool_id = aws_cognito_user_pool.main.id
+  identifier   = "https://dev-var.bugfloyd.com"
+  name         = "Dev VAR backend"
+
+  scope {
+    scope_name        = "users:read"
+    scope_description = "Read users access"
+  }
+
+  scope {
+    scope_name        = "create:user"
+    scope_description = "Create a user access"
+  }
+}
+
 
 # resource "aws_cognito_identity_provider" "google" {
 #   user_pool_id  = aws_cognito_user_pool.main.id
@@ -101,5 +123,9 @@ output "cognito_user_pool_client_id" {
 }
 
 output "cognito_user_pool_domain" {
-  value = aws_cognito_user_pool_domain.main.domain
+  value = "${aws_cognito_user_pool_domain.main.domain}.auth.${var.aws_region}.amazoncognito.com"
+}
+
+output "cognito_user_pool_resource_server_identifier" {
+  value = aws_cognito_resource_server.main_backend.identifier
 }
