@@ -1,5 +1,5 @@
 resource "aws_cognito_user_pool" "main" {
-  name = "varecognizer-user-pool"
+  name = "var-user-pool"
 
   password_policy {
     minimum_length    = 8
@@ -29,13 +29,20 @@ resource "aws_cognito_user_pool" "main" {
     mutable             = true
   }
 
+  schema {
+    name                     = "last_name"
+    attribute_data_type      = "String"
+    mutable                  = true
+    required                 = false
+    developer_only_attribute = false
+  }
+
   account_recovery_setting {
     recovery_mechanism {
       name     = "verified_email"
       priority = 1
     }
   }
-
 
   username_attributes = ["email"]
   mfa_configuration   = "OFF"
@@ -111,7 +118,6 @@ resource "aws_cognito_resource_server" "main_backend" {
 #     "given_name" = "given_name",
 #   }
 # }
-
 
 # Output the Cognito User Pool ID and Cognito User Pool Client ID
 output "cognito_user_pool_id" {
