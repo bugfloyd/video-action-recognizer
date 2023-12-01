@@ -2,10 +2,11 @@ resource "aws_cognito_user_pool" "main" {
   name = "var-user-pool"
 
   password_policy {
-    minimum_length    = 8
-    require_numbers   = true
-    require_lowercase = true
-    require_uppercase = true
+    minimum_length                   = 8
+    require_numbers                  = true
+    require_lowercase                = true
+    require_uppercase                = true
+    temporary_password_validity_days = 7
   }
 
   admin_create_user_config {
@@ -23,18 +24,29 @@ resource "aws_cognito_user_pool" "main" {
   }
 
   schema {
-    attribute_data_type = "String"
-    name                = "given_name"
-    required            = true
-    mutable             = true
+    attribute_data_type      = "String"
+    name                     = "given_name"
+    required                 = true
+    mutable                  = true
+    developer_only_attribute = false
+
+    string_attribute_constraints {
+      min_length = 2
+      max_length = 50
+    }
   }
 
   schema {
-    name                     = "last_name"
     attribute_data_type      = "String"
+    name                     = "last_name"
     mutable                  = true
     required                 = false
     developer_only_attribute = false
+
+    string_attribute_constraints {
+      min_length = 2
+      max_length = 50
+    }
   }
 
   account_recovery_setting {
@@ -45,7 +57,10 @@ resource "aws_cognito_user_pool" "main" {
   }
 
   username_attributes = ["email"]
-  mfa_configuration   = "OFF"
+  username_configuration {
+    case_sensitive = false
+  }
+  mfa_configuration = "OFF"
 }
 
 resource "aws_cognito_user_pool_domain" "main" {
