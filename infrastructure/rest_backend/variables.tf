@@ -18,8 +18,13 @@ variable "rest_api_id" {
   type        = string
 }
 
-variable "api_resource_id" {
-  description = "API Gateway resource ID"
+variable "api_root_resource_id" {
+  description = "API Gateway root resource ID"
+  type        = string
+}
+
+variable "authorizer_id" {
+  description = "API Gateway authorizer ID"
   type        = string
 }
 
