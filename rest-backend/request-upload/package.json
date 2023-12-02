@@ -1,10 +1,11 @@
 {
-    "name": "uploader-lambda",
+    "name": "request-upload",
     "version": "1.0.0",
     "description": "AWS Lambda function in TypeScript to respond upload requests",
     "scripts": {
         "build": "tsc",
-        "deploy": "npm run build && zip -r function.zip dist"
+        "clean": "rm -rf dist && rm function.zip",
+        "bundle": "npm run clean && npm run build && zip -r function.zip dist"
     },
     "dependencies": {
         "aws-lambda": "^1.0.7"
