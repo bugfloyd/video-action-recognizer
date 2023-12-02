@@ -29,7 +29,9 @@ jobs:
           cd ./package && zip -r9 ../upload_listener.zip . && cd ..
           rm -rf ./package
       - name: Echo Config
-        run: echo ${{ vars.AWS_REGION }}
+        run: |
+          echo ${{ vars.AWS_REGION }}
+          echo ${{ vars.ENVIRONMENT_STAGE }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
