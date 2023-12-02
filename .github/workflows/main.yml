@@ -29,13 +29,13 @@ jobs:
           cd ./package && zip -r9 ../upload_listener.zip . && cd ..
           rm -rf ./package
       - name: Echo Config
-        run: echo ${{ env.AWS_REGION }}
+        run: echo ${{ vars.AWS_REGION }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: ${{ env.PIPELINE_EXEC_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.PIPELINE_EXEC_ROLE_ARN }}
           role-session-name: GitHubActions
           role-duration-seconds: 3600
       - name: Upload to S3
-        run: aws s3 cp upload-listener/upload_listener.zip s3://${{ env.S3_LAMBDA_BUCKET }}/upload_listener/latest/function.zip
+        run: aws s3 cp upload-listener/upload_listener.zip s3://${{ vars.S3_LAMBDA_BUCKET }}/upload_listener/latest/function.zip
