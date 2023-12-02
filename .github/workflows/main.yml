@@ -1,0 +1,34 @@
+name: CI/CD Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-push-lambda:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Build upload listener Lambda
+        run: |
+          cd upload-listener
+          rm -rf ./package
+          mkdir -p ./package
+          cp listener_lambda.py ./package/
+          pip install --upgrade pip
+          pip install -r requirements.txt -t ./package
+      - name: Zip
+        run: |
+          cd upload-listener
+          cd ./package && zip -r9 ../upload_listener.zip . && cd ..
+          rm -rf ./package
+      # - name: Configure AWS Credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: ${{ vars.PIPELINE_EXEC_ROLE_ARN }}
+      #     aws-region: ${{ vars.AWS_REGION }}
+      # - name: Upload to S3
+      #   run: aws s3 cp upload-listener/upload_listener.zip s3://<LAMBDA_BUCKET_NAME>/upload_listener/latest/function.zip
