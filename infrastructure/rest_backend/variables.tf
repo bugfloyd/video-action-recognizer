@@ -27,5 +27,3 @@ variable "authorizer_id" {
   description = "API Gateway authorizer ID"
   type        = string
 }
-
-

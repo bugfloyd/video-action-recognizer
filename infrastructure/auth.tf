@@ -68,13 +68,20 @@ resource "aws_cognito_user_pool_domain" "main" {
   user_pool_id = aws_cognito_user_pool.main.id
 }
 
+resource "aws_cognito_resource_server" "main_backend" {
+  user_pool_id = aws_cognito_user_pool.main.id
+  identifier   = "https://var.bugfloyd.com"
+  name         = "VAR backend"
+}
+
+
 resource "aws_cognito_user_pool_client" "main" {
   name                                 = "Video Action Recognizer"
   user_pool_id                         = aws_cognito_user_pool.main.id
   generate_secret                      = false
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_flows                  = ["code"]
-  allowed_oauth_scopes                 = ["openid", "phone", "email", "profile"]
+  allowed_oauth_scopes                 = ["openid", "email", "profile"]
   callback_urls                        = ["http://localhost"]
   logout_urls                          = ["http://localhost"]
   explicit_auth_flows = [
@@ -97,23 +104,6 @@ resource "aws_cognito_user_group" "user_group" {
   user_pool_id = aws_cognito_user_pool.main.id
   precedence   = 2
 }
-
-resource "aws_cognito_resource_server" "main_backend" {
-  user_pool_id = aws_cognito_user_pool.main.id
-  identifier   = "https://dev-var.bugfloyd.com"
-  name         = "Dev VAR backend"
-
-  scope {
-    scope_name        = "users:read"
-    scope_description = "Read users access"
-  }
-
-  scope {
-    scope_name        = "create:user"
-    scope_description = "Create a user access"
-  }
-}
-
 
 # resource "aws_cognito_identity_provider" "google" {
 #   user_pool_id  = aws_cognito_user_pool.main.id
