@@ -31,8 +31,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: eu-central-1
-          role-to-assume: arn:aws:iam::792295512903:role/github-actions-role
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.PIPELINE_EXEC_ROLE_ARN }}
           role-session-name: GitHubActions
           role-duration-seconds: 3600
       - name: Upload to S3
