@@ -6,7 +6,7 @@ resource "aws_lambda_function" "upload_request_lambda" {
 
   # Assume you have packaged your Lambda function code into a ZIP file and have uploaded it to S3
   s3_bucket        = var.lambda_bucket
-  s3_key           = "rest_backend/request_upload/function.zip"
+  s3_key           = "uploader/latest/function.zip"
   source_code_hash = var.upload_request_lambda_bundle_sha
 
   # environment {

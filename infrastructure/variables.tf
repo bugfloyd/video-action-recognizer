@@ -28,6 +28,10 @@ variable "upload_request_lambda_bundle_sha" {
   type        = string
 }
 
+variable "get_users_lambda_bundle_sha" {
+  description = "Create user lambda function zip sha to be used in source_code_hash"
+  type        = string
+}
 
 variable "cognito_domain_prefix" {
   description = "The prefix for the Amazon Cognito domain."
