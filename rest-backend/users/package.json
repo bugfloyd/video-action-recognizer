@@ -1,7 +1,7 @@
 {
-    "name": "get-users",
+    "name": "users",
     "version": "1.0.0",
-    "description": "AWS Lambda function in TypeScript to get the users list",
+    "description": "AWS Lambda function in TypeScript for user management",
     "scripts": {
         "build": "tsc",
         "clean": "rm -rf dist && rm -f function.zip",

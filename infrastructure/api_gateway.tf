@@ -12,7 +12,7 @@ module "rest_backend" {
   rest_api_id                      = aws_api_gateway_rest_api.var_backend.id
   api_root_resource_id             = aws_api_gateway_rest_api.var_backend.root_resource_id
   authorizer_id                    = aws_api_gateway_authorizer.var_cognito_authorizer.id
-  get_users_lambda_bundle_sha      = var.get_users_lambda_bundle_sha
+  users_lambda_bundle_sha          = var.users_lambda_bundle_sha
   user_pool_id                     = aws_cognito_user_pool.main.id
 }
 

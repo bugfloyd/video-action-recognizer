@@ -1,13 +1,13 @@
-resource "aws_lambda_function" "get_users_lambda" {
-  function_name = "var_get_users"
+resource "aws_lambda_function" "users_lambda" {
+  function_name = "var_users"
   handler       = "dist/index.handler"
-  role          = aws_iam_role.get_users_lambda_exec_role.arn
+  role          = aws_iam_role.users_lambda_exec_role.arn
   runtime       = "nodejs18.x"
 
   # Assume you have packaged your Lambda function code into a ZIP file and have uploaded it to S3
   s3_bucket        = var.lambda_bucket
-  s3_key           = "rest_backend/get_users/function.zip"
-  source_code_hash = var.get_users_lambda_bundle_sha
+  s3_key           = "rest_backend/users/function.zip"
+  source_code_hash = var.users_lambda_bundle_sha
 
   environment {
     variables = {
@@ -18,8 +18,8 @@ resource "aws_lambda_function" "get_users_lambda" {
 }
 
 # IAM role for the Lambda function
-resource "aws_iam_role" "get_users_lambda_exec_role" {
-  name = "get_users_lambda_exec_role"
+resource "aws_iam_role" "users_lambda_exec_role" {
+  name = "users_lambda_exec_role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -35,8 +35,8 @@ resource "aws_iam_role" "get_users_lambda_exec_role" {
   })
 }
 
-resource "aws_iam_policy" "get_users_lambda_logging_policy" {
-  name = "get_users_lambda_logging_policy"
+resource "aws_iam_policy" "users_lambda_logging_policy" {
+  name = "users_lambda_logging_policy"
   policy = jsonencode({
     Version : "2012-10-17",
     Statement : [
@@ -72,44 +72,44 @@ resource "aws_iam_policy" "cognito_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_cognito_policy_attachment" {
-  role       = aws_iam_role.get_users_lambda_exec_role.name
+  role       = aws_iam_role.users_lambda_exec_role.name
   policy_arn = aws_iam_policy.cognito_policy.arn
 }
 
-resource "aws_iam_role_policy_attachment" "get_users_lambda_logs_attachment" {
-  role       = aws_iam_role.get_users_lambda_exec_role.name
-  policy_arn = aws_iam_policy.get_users_lambda_logging_policy.arn
+resource "aws_iam_role_policy_attachment" "users_lambda_logs_attachment" {
+  role       = aws_iam_role.users_lambda_exec_role.name
+  policy_arn = aws_iam_policy.users_lambda_logging_policy.arn
 }
 
-resource "aws_lambda_permission" "get_users_lambda_permission" {
+resource "aws_lambda_permission" "users_lambda_permission" {
   statement_id  = "AllowAPIGatewayInvokeCreateUser"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.get_users_lambda.function_name
+  function_name = aws_lambda_function.users_lambda.function_name
   principal     = "apigateway.amazonaws.com"
 
   # Depends on the API Gateway deployment to exist before permission is granted
   source_arn = var.api_gateway_execution_arn
 }
 
-resource "aws_api_gateway_resource" "get_users_resource" {
+resource "aws_api_gateway_resource" "users_resource" {
   rest_api_id = var.rest_api_id
   parent_id   = var.api_root_resource_id
   path_part   = "users"
 }
 
-resource "aws_api_gateway_method" "get_users_method" {
+resource "aws_api_gateway_method" "users_method" {
   rest_api_id   = var.rest_api_id
-  resource_id   = aws_api_gateway_resource.get_users_resource.id
+  resource_id   = aws_api_gateway_resource.users_resource.id
   http_method   = "GET"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = var.authorizer_id
 }
 
-resource "aws_api_gateway_integration" "get_users_lambda_integration" {
+resource "aws_api_gateway_integration" "users_lambda_integration" {
   rest_api_id             = var.rest_api_id
-  resource_id             = aws_api_gateway_resource.get_users_resource.id
-  http_method             = aws_api_gateway_method.get_users_method.http_method
+  resource_id             = aws_api_gateway_resource.users_resource.id
+  http_method             = aws_api_gateway_method.users_method.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = aws_lambda_function.get_users_lambda.invoke_arn
+  uri                     = aws_lambda_function.users_lambda.invoke_arn
 }
