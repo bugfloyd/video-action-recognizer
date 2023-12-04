@@ -38,7 +38,7 @@ resource "aws_cognito_user_pool" "main" {
 
   schema {
     attribute_data_type      = "String"
-    name                     = "last_name"
+    name                     = "family_name"
     mutable                  = true
     required                 = false
     developer_only_attribute = false
