@@ -91,13 +91,21 @@ resource "aws_lambda_permission" "users_lambda_permission" {
   source_arn = var.api_gateway_execution_arn
 }
 
+# API Gateway resources
 resource "aws_api_gateway_resource" "users_resource" {
   rest_api_id = var.rest_api_id
   parent_id   = var.api_root_resource_id
   path_part   = "users"
 }
 
-resource "aws_api_gateway_method" "users_method" {
+resource "aws_api_gateway_resource" "user_resource" {
+  rest_api_id = var.rest_api_id
+  parent_id   = aws_api_gateway_resource.users_resource.id
+  path_part   = "{user_id}"
+}
+
+# API Gateway http methods
+resource "aws_api_gateway_method" "get_users" {
   rest_api_id   = var.rest_api_id
   resource_id   = aws_api_gateway_resource.users_resource.id
   http_method   = "GET"
@@ -105,10 +113,79 @@ resource "aws_api_gateway_method" "users_method" {
   authorizer_id = var.authorizer_id
 }
 
-resource "aws_api_gateway_integration" "users_lambda_integration" {
+resource "aws_api_gateway_method" "post_user" {
+  rest_api_id   = var.rest_api_id
+  resource_id   = aws_api_gateway_resource.users_resource.id
+  http_method   = "POST"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = var.authorizer_id
+}
+
+resource "aws_api_gateway_method" "get_user" {
+  rest_api_id   = var.rest_api_id
+  resource_id   = aws_api_gateway_resource.user_resource.id
+  http_method   = "GET"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = var.authorizer_id
+}
+
+resource "aws_api_gateway_method" "patch_user" {
+  rest_api_id   = var.rest_api_id
+  resource_id   = aws_api_gateway_resource.user_resource.id
+  http_method   = "PATCH"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = var.authorizer_id
+}
+
+resource "aws_api_gateway_method" "delete_user" {
+  rest_api_id   = var.rest_api_id
+  resource_id   = aws_api_gateway_resource.user_resource.id
+  http_method   = "DELETE"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = var.authorizer_id
+}
+
+# API Gateway Lambda Integratons
+resource "aws_api_gateway_integration" "get_users_lambda_integration" {
   rest_api_id             = var.rest_api_id
   resource_id             = aws_api_gateway_resource.users_resource.id
-  http_method             = aws_api_gateway_method.users_method.http_method
+  http_method             = aws_api_gateway_method.get_users.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.users_lambda.invoke_arn
+}
+
+resource "aws_api_gateway_integration" "post_user_lambda_integration" {
+  rest_api_id             = var.rest_api_id
+  resource_id             = aws_api_gateway_resource.users_resource.id
+  http_method             = aws_api_gateway_method.post_user.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.users_lambda.invoke_arn
+}
+
+resource "aws_api_gateway_integration" "get_user_lambda_integration" {
+  rest_api_id             = var.rest_api_id
+  resource_id             = aws_api_gateway_resource.user_resource.id
+  http_method             = aws_api_gateway_method.get_user.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.users_lambda.invoke_arn
+}
+
+resource "aws_api_gateway_integration" "patch_user_lambda_integration" {
+  rest_api_id             = var.rest_api_id
+  resource_id             = aws_api_gateway_resource.user_resource.id
+  http_method             = aws_api_gateway_method.patch_user.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.users_lambda.invoke_arn
+}
+
+resource "aws_api_gateway_integration" "delete_user_lambda_integration" {
+  rest_api_id             = var.rest_api_id
+  resource_id             = aws_api_gateway_resource.user_resource.id
+  http_method             = aws_api_gateway_method.delete_user.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.users_lambda.invoke_arn
