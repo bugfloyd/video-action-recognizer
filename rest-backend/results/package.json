@@ -1,0 +1,15 @@
+{
+    "name": "results",
+    "version": "1.0.0",
+    "description": "AWS Lambda function in TypeScript for analysis results management",
+    "scripts": {
+        "build": "tsc",
+        "clean": "rm -rf dist && rm -f function.zip",
+        "bundle": "npm run clean && npm run build && zip -r function.zip dist"
+    },
+    "devDependencies": {
+        "@types/aws-lambda": "^8.10.129",
+        "@types/node": "^20.10.0",
+        "typescript": "^5.3.2"
+    }
+}

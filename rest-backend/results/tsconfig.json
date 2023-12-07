@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "target": "es2020",       // Specify ECMAScript target version
+      "module": "commonjs",     // Specify module code generation
+      "outDir": "./dist",       // Redirect output structure to the directory
+      "rootDir": "./src",       // Specify the root directory of input files
+      "strict": true,           // Enable all strict type-checking options
+      "esModuleInterop": true,  // Enables compatibility with Babel imports
+      "skipLibCheck": true      // Skip type checking of all declaration files
+    },
+    "include": ["src/**/*"],     // Include all files in the src folder
+    "exclude": ["node_modules"]  // Exclude the node_modules folder
+  }
+  
