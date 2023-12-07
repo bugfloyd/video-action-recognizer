@@ -1,7 +1,7 @@
 resource "aws_lambda_function" "users_lambda" {
-  function_name = "var_users"
+  function_name = "VarUsers"
   handler       = "dist/index.handler"
-  role          = aws_iam_role.users_lambda_exec_role.arn
+  role          = aws_iam_role.users_management_lambda_exec_role.arn
   runtime       = "nodejs18.x"
 
   # Assume you have packaged your Lambda function code into a ZIP file and have uploaded it to S3
@@ -17,9 +17,8 @@ resource "aws_lambda_function" "users_lambda" {
   }
 }
 
-# IAM role for the Lambda function
-resource "aws_iam_role" "users_lambda_exec_role" {
-  name = "users_lambda_exec_role"
+resource "aws_iam_role" "users_management_lambda_exec_role" {
+  name = "VarUsersManagementLambdaExecRole"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -35,50 +34,15 @@ resource "aws_iam_role" "users_lambda_exec_role" {
   })
 }
 
-resource "aws_iam_policy" "users_lambda_logging_policy" {
-  name = "users_lambda_logging_policy"
-  policy = jsonencode({
-    Version : "2012-10-17",
-    Statement : [
-      {
-        Effect : "Allow",
-        Action : [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ],
-        Resource : "arn:aws:logs:*:*:*"
-      }
-    ]
-  })
-}
-
-resource "aws_iam_policy" "cognito_policy" {
-  name        = "CognitoListUsersPolicy"
-  description = "Policy to allow Lambda function to list Cognito users"
-
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action = [
-          "cognito-idp:ListUsers"
-        ],
-        Effect   = "Allow",
-        Resource = "arn:aws:cognito-idp:*:*:userpool/${var.user_pool_id}"
-      }
-    ]
-  })
-}
-
+# IAM role policy attachments
 resource "aws_iam_role_policy_attachment" "lambda_cognito_policy_attachment" {
-  role       = aws_iam_role.users_lambda_exec_role.name
-  policy_arn = aws_iam_policy.cognito_policy.arn
+  role       = aws_iam_role.users_management_lambda_exec_role.name
+  policy_arn = aws_iam_policy.lambda_cognito_policy.arn
 }
 
 resource "aws_iam_role_policy_attachment" "users_lambda_logs_attachment" {
-  role       = aws_iam_role.users_lambda_exec_role.name
-  policy_arn = aws_iam_policy.users_lambda_logging_policy.arn
+  role       = aws_iam_role.users_management_lambda_exec_role.name
+  policy_arn = aws_iam_policy.lambda_logging_policy.arn
 }
 
 resource "aws_lambda_permission" "users_lambda_permission" {
