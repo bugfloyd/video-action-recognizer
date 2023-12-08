@@ -8,9 +8,18 @@ variable "lambda_bucket" {
   type        = string
 }
 
-
 variable "users_lambda_bundle_sha" {
-  description = "Create user lambda function zip sha to be used in source_code_hash"
+  description = "Users lambda function zip sha to be used in source_code_hash"
+  type        = string
+}
+
+variable "files_lambda_bundle_sha" {
+  description = "Files lambda function zip sha to be used in source_code_hash"
+  type        = string
+}
+
+variable "results_lambda_bundle_sha" {
+  description = "Results lambda function zip sha to be used in source_code_hash"
   type        = string
 }
 
