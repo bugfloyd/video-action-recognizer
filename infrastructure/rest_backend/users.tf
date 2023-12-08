@@ -1,7 +1,7 @@
 resource "aws_lambda_function" "users_lambda" {
   function_name = "VarUsers"
   handler       = "dist/index.handler"
-  role          = aws_iam_role.users_management_lambda_exec_role.arn
+  role          = aws_iam_role.users_lambda_exec_role.arn
   runtime       = "nodejs18.x"
 
   # Assume you have packaged your Lambda function code into a ZIP file and have uploaded it to S3
@@ -17,8 +17,8 @@ resource "aws_lambda_function" "users_lambda" {
   }
 }
 
-resource "aws_iam_role" "users_management_lambda_exec_role" {
-  name = "VarUsersManagementLambdaExecRole"
+resource "aws_iam_role" "users_lambda_exec_role" {
+  name = "VarUsersLambdaExecRole"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -35,18 +35,18 @@ resource "aws_iam_role" "users_management_lambda_exec_role" {
 }
 
 # IAM role policy attachments
-resource "aws_iam_role_policy_attachment" "lambda_cognito_policy_attachment" {
-  role       = aws_iam_role.users_management_lambda_exec_role.name
+resource "aws_iam_role_policy_attachment" "users_lambda_cognito_policy_attachment" {
+  role       = aws_iam_role.users_lambda_exec_role.name
   policy_arn = aws_iam_policy.lambda_cognito_policy.arn
 }
 
 resource "aws_iam_role_policy_attachment" "users_lambda_logs_attachment" {
-  role       = aws_iam_role.users_management_lambda_exec_role.name
+  role       = aws_iam_role.users_lambda_exec_role.name
   policy_arn = aws_iam_policy.lambda_logging_policy.arn
 }
 
 resource "aws_lambda_permission" "users_lambda_permission" {
-  statement_id  = "AllowAPIGatewayInvokeCreateUser"
+  statement_id  = "AllowAPIGatewayInvokeUsers"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.users_lambda.function_name
   principal     = "apigateway.amazonaws.com"
