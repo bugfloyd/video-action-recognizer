@@ -19,8 +19,11 @@ function validateEmail(email: string): boolean {
   return regex.test(email);
 }
 
-async function createUserInCognito(userInput: UserInput, userPoolId: string) {
-  const awsRegion: string = process.env.REGION || 'eu-central-1';
+async function createUserInCognito(
+  userInput: UserInput,
+  userPoolId: string,
+  awsRegion: string
+) {
   const client = new CognitoIdentityProviderClient({ region: awsRegion });
 
   const command = new AdminCreateUserCommand({
@@ -34,14 +37,9 @@ async function createUserInCognito(userInput: UserInput, userPoolId: string) {
     MessageAction: 'SUPPRESS',
   });
 
-  try {
-    const response = await client.send(command);
-    console.log('User created:', response);
-    return response;
-  } catch (error) {
-    console.error('Error creating user:', error);
-    throw error;
-  }
+  const response = await client.send(command);
+  console.log('User created:', response);
+  return response;
 }
 
 export const handler: APIGatewayProxyHandler = async (
@@ -49,6 +47,18 @@ export const handler: APIGatewayProxyHandler = async (
 ): Promise<APIGatewayProxyResult> => {
   const userpoolId: string = process.env.USER_POOL_ID || '';
   if (!userpoolId) {
+    console.error('ERROR - No USER_POOL_ID environment variable found');
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: 'Unexpected error occured!',
+      }),
+    };
+  }
+
+  const awsRegion: string = process.env.REGION || '';
+  if (!awsRegion) {
+    console.error('ERROR - No REGION environment variable found');
     return {
       statusCode: 500,
       body: JSON.stringify({
@@ -113,7 +123,11 @@ export const handler: APIGatewayProxyHandler = async (
     };
     // Create Cognito user
     try {
-      const createdUser = await createUserInCognito(userToCreate, userpoolId);
+      const createdUser = await createUserInCognito(
+        userToCreate,
+        userpoolId,
+        awsRegion
+      );
 
       return {
         statusCode: 200,
@@ -139,6 +153,7 @@ export const handler: APIGatewayProxyHandler = async (
         }),
       };
     } catch (error) {
+      console.error('ERROR - Failed to create the user', error);
       return {
         statusCode: 500,
         body: JSON.stringify({
