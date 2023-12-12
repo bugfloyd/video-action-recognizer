@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  UserPoolId:
+    Type: String
+  Region:
+    Type: String
+    Default: eu-central-1
+
+Resources:
+  VarUsers:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/index.handler
+      Runtime: nodejs18.x
+      PackageType: Zip
+      CodeUri: ./users
+      Environment:
+        Variables:
+          USER_POOL_ID: !Ref UserPoolId
+          REGION: !Ref Region
