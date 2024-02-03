@@ -1,175 +1,65 @@
 import {
-  AdminCreateUserCommand,
-  CognitoIdentityProviderClient,
-} from '@aws-sdk/client-cognito-identity-provider';
-import {
   APIGatewayProxyEvent,
   APIGatewayProxyHandler,
   APIGatewayProxyResult,
 } from 'aws-lambda';
+import { UserController } from './UsersController';
+import { awsRegion, userPoolId } from './variables';
+import { UserCases, UserException } from './UserCases';
 
-interface UserInput {
-  given_name: string;
-  family_name?: string;
-  email: string;
-}
+const usersRouter = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
+  const { httpMethod, pathParameters } = event;
+  const userId = pathParameters ? pathParameters['user_id'] : null;
 
-function validateEmail(email: string): boolean {
-  const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-  return regex.test(email);
-}
+  // Create a new User
+  if (!userId && httpMethod === 'POST') {
+    const usersController = new UserController();
+    const createdUser = await usersController.createUser(event);
+    return {
+      statusCode: 200,
+      body: JSON.stringify(createdUser),
+    };
+  }
 
-async function createUserInCognito(
-  userInput: UserInput,
-  userPoolId: string,
-  awsRegion: string
-) {
-  const client = new CognitoIdentityProviderClient({ region: awsRegion });
+  throw new UserException(UserCases.notImplemented);
+};
 
-  const command = new AdminCreateUserCommand({
-    UserPoolId: userPoolId,
-    Username: userInput.email,
-    UserAttributes: [
-      { Name: 'email', Value: userInput.email },
-      { Name: 'given_name', Value: userInput.given_name },
-      { Name: 'family_name', Value: userInput.family_name || '' },
-    ],
-    MessageAction: 'SUPPRESS',
-  });
+const validateSystemConfig = () => {
+  if (!userPoolId) {
+    console.error('ERROR - No USER_POOL_ID environment variable found');
+    throw new UserException(UserCases.unexpextedError);
+  }
 
-  const response = await client.send(command);
-  console.log('User created:', response);
-  return response;
-}
+  if (!awsRegion) {
+    console.error('ERROR - No REGION environment variable found');
+    throw new UserException(UserCases.unexpextedError);
+  }
+};
 
 export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
-  const userpoolId: string = process.env.USER_POOL_ID || '';
-  if (!userpoolId) {
-    console.error('ERROR - No USER_POOL_ID environment variable found');
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        message: 'Unexpected error occured!',
-      }),
-    };
-  }
-
-  const awsRegion: string = process.env.REGION || '';
-  if (!awsRegion) {
-    console.error('ERROR - No REGION environment variable found');
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        message: 'Unexpected error occured!',
-      }),
-    };
-  }
-
-  const httpMethod = event.httpMethod;
-  const pathParameters = event.pathParameters;
-  const userId = pathParameters ? pathParameters['user_id'] : null;
-
-  let requestBody: UserInput;
   try {
-    requestBody = event.body ? JSON.parse(event.body) : {};
+    validateSystemConfig();
+    return await usersRouter(event);
   } catch (error) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: 'Invalid user JSON provided!',
-      }),
-    };
-  }
-
-  // Create a new User
-  if (!userId && httpMethod === 'POST') {
-    // Validate and clean up the requestBody
-    const validKeys: Array<keyof UserInput> = [
-      'given_name',
-      'family_name',
-      'email',
-    ];
-    const cleanedRequestBody: Partial<UserInput> = {};
-    for (const key of validKeys) {
-      if (requestBody[key]) {
-        cleanedRequestBody[key] = requestBody[key];
-      }
-    }
-
-    if (!cleanedRequestBody.email || !cleanedRequestBody.given_name) {
+    if (error instanceof UserException) {
       return {
-        statusCode: 400,
+        statusCode: error.code,
         body: JSON.stringify({
-          message: 'Email address and given name are required!',
+          message: error.message,
         }),
       };
-    }
-
-    if (!validateEmail(cleanedRequestBody.email)) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({
-          message: 'The provided email address is not valid!',
-        }),
-      };
-    }
-
-    const userToCreate: UserInput = {
-      given_name: cleanedRequestBody.given_name,
-      family_name: cleanedRequestBody.family_name,
-      email: cleanedRequestBody.email,
-    };
-    // Create Cognito user
-    try {
-      const createdUser = await createUserInCognito(
-        userToCreate,
-        userpoolId,
-        awsRegion
-      );
-
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          message: 'User created successfully',
-          user: {
-            username: createdUser.User?.Username,
-            email:
-              createdUser.User?.Attributes?.find(
-                (attr) => attr.Name === 'email'
-              )?.Value || '',
-            given_name:
-              createdUser.User?.Attributes?.find(
-                (attr) => attr.Name === 'given_name'
-              )?.Value || '',
-            family_name:
-              createdUser.User?.Attributes?.find(
-                (attr) => attr.Name === 'family_name'
-              )?.Value || '',
-            created_at: createdUser.User?.UserCreateDate,
-            modified_at: createdUser.User?.UserLastModifiedDate,
-          },
-        }),
-      };
-    } catch (error) {
-      console.error('ERROR - Failed to create the user', error);
+    } else {
+      console.log('Nooooo');
       return {
         statusCode: 500,
         body: JSON.stringify({
-          message: 'Unexpected error occured!',
+          message: 'An unexpected error occured',
         }),
       };
     }
   }
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: 'Request processed successfully',
-      method: httpMethod,
-      body: requestBody,
-      userId,
-    }),
-  };
 };
