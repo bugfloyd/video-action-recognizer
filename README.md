@@ -1,4 +1,4 @@
-# Video Action Recognizer
+# Video Action Recognizer [In Development]
 
 This project contains all necessary components and services for the Video Action Recognizer application.
 
@@ -99,8 +99,11 @@ aws_region                        = "<AWS_REGION>"
 input_bucket                      = "<INPUT_BUCKET_NAME>"
 output_bucket                     = "<OUTPUT_BUCKET_NAME>"
 lambda_bucket                     = "<LAMBDA_BUCKET_NAME>"
-upload_listener_lambda_bundle_sha = "<LAMBDA_BUNDLE_SHA>"
+upload_listener_lambda_bundle_sha = "<UPLOAD_LISTENER_LAMBDA_BUNDLE_SHA>"
 cognito_domain_prefix             = "<AWS_COGNITO_DOMAIN_PREFIX>"
+users_lambda_bundle_sha           = "<USERS_LAMBDA_BUNDLE_SHA>"
+results_lambda_bundle_sha         = "RESULTS_LAMBDA_BUNDLE_SHA>"
+files_lambda_bundle_sha           = "<FILESLAMBDA_BUNDLE_SHA>"
 ```
 
 Initialize Terraform with the S3 backend:
