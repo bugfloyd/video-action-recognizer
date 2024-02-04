@@ -1,65 +1,40 @@
-import {
-  APIGatewayProxyEvent,
-  APIGatewayProxyHandler,
-  APIGatewayProxyResult,
-} from 'aws-lambda';
 import { UserController } from './UsersController';
-import { awsRegion, userPoolId } from './variables';
-import { UserCases, UserException } from './UserCases';
+import { VarException, configCases, globalCases } from './shared/exceptions';
+import { userPoolId } from './variables';
+import { handlerFactory } from './shared/handlers';
+import { UserException } from './UserExceptions';
+import { ServiceRouter } from './shared/types';
 
-const usersRouter = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+const usersRouter: ServiceRouter = async (event) => {
   const { httpMethod, pathParameters } = event;
   const userId = pathParameters ? pathParameters['user_id'] : null;
 
   // Create a new User
   if (!userId && httpMethod === 'POST') {
+    let requestBody;
+    try {
+      requestBody = event.body ? JSON.parse(event.body) : {};
+    } catch (error) {
+      console.error(error);
+      throw new UserException(globalCases.invalidBodyJson);
+    }
+
     const usersController = new UserController();
-    const createdUser = await usersController.createUser(event);
+    const createdUser = await usersController.createUser(requestBody);
     return {
       statusCode: 200,
       body: JSON.stringify(createdUser),
     };
   }
 
-  throw new UserException(UserCases.notImplemented);
+  throw new VarException(globalCases.notImplemented);
 };
 
-const validateSystemConfig = () => {
+const validateUsersLambdaConfig = () => {
   if (!userPoolId) {
     console.error('ERROR - No USER_POOL_ID environment variable found');
-    throw new UserException(UserCases.unexpextedError);
-  }
-
-  if (!awsRegion) {
-    console.error('ERROR - No REGION environment variable found');
-    throw new UserException(UserCases.unexpextedError);
+    throw new VarException(configCases.badConfig);
   }
 };
 
-export const handler: APIGatewayProxyHandler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
-  try {
-    validateSystemConfig();
-    return await usersRouter(event);
-  } catch (error) {
-    if (error instanceof UserException) {
-      return {
-        statusCode: error.code,
-        body: JSON.stringify({
-          message: error.message,
-        }),
-      };
-    } else {
-      console.log('Nooooo');
-      return {
-        statusCode: 500,
-        body: JSON.stringify({
-          message: 'An unexpected error occured',
-        }),
-      };
-    }
-  }
-};
+export const handler = handlerFactory(usersRouter, validateUsersLambdaConfig);

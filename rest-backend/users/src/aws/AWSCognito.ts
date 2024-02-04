@@ -4,7 +4,8 @@ import {
   CognitoIdentityProviderClient,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { CreateUserParams } from '../types';
-import { awsRegion, userPoolId } from '../variables';
+import { userPoolId } from '../variables';
+import { awsRegion } from '../shared/variables';
 
 export class AWSCognito {
   private awsRegion: string;

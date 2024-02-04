@@ -2,7 +2,7 @@ import {
   AdminCreateUserCommandOutput,
   UserType,
 } from '@aws-sdk/client-cognito-identity-provider';
-import { UserCases, UserException } from './UserCases';
+import { userCases, UserException } from './UserExceptions';
 import { AWSCognito } from './aws/AWSCognito';
 import { CreateUserParams, APIUser } from './types';
 
@@ -16,11 +16,11 @@ export class UsersService {
     const { email, given_name, family_name } = params;
 
     if (!email || !given_name) {
-      throw new UserException(UserCases.createUserMissingParams);
+      throw new UserException(userCases.createUserMissingParams);
     }
 
     if (!validateEmail(email)) {
-      throw new UserException(UserCases.invalidEmail);
+      throw new UserException(userCases.invalidEmail);
     }
 
     const cognito = new AWSCognito();
@@ -35,14 +35,14 @@ export class UsersService {
     } catch (error) {
       if (error instanceof Error) {
         if (error.name === 'UsernameExistsException') {
-          throw new UserException(UserCases.userExist);
+          throw new UserException(userCases.userExist);
         }
       }
-      throw new UserException(UserCases.unexpextedError);
+      throw new UserException(userCases.unexpextedError);
     }
 
     if (!createUserResponse || !createUserResponse.User) {
-      throw new UserException(UserCases.unexpextedError);
+      throw new UserException(userCases.unexpextedError);
     }
 
     const user = createUserResponse.User;

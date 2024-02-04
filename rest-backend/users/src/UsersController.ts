@@ -1,18 +1,8 @@
-import { APIGatewayProxyEvent } from 'aws-lambda';
 import { APIUser, CreateUserParams } from './types';
 import { UsersService } from './UsersService';
-import { UserCases, UserException } from './UserCases';
 
 export class UserController {
-  async createUser(event: APIGatewayProxyEvent): Promise<APIUser> {
-    let requestBody: CreateUserParams;
-    try {
-      requestBody = event.body ? JSON.parse(event.body) : {};
-    } catch (error) {
-      console.error(error);
-      throw new UserException(UserCases.invalidUserJson);
-    }
-
+  async createUser(requestBody: CreateUserParams): Promise<APIUser> {
     // Validate and clean up the requestBody
     const validKeys: Array<keyof CreateUserParams> = [
       'given_name',
