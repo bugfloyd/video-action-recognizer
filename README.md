@@ -157,3 +157,7 @@ To update the Lambda function:
 terraform plan -out main.tfplan
 terraform apply "main.tfplan"
 ```
+
+## LICENSE
+
+Code released under the GNU GPL v3 License.
