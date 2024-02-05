@@ -145,6 +145,16 @@ docker buildx build --platform=linux/amd64 \
 docker push <ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/video-action-regognizer:latest
 ```
 
+### First admin user
+
+In ordet to send requests to the deployed serverless RESTful API, you need to create the first admin user in AWS Cognito:
+
+```bash
+cd rest-backend
+
+./init.sh --user-pool-id <value> --email <value> --given-name <value> --family-name <value> --password <value> [--profile <name>] [--region <value>]
+```
+
 ## Updating resources
 
 To update the Lambda function:
