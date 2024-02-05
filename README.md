@@ -51,7 +51,7 @@ terraform plan -out setup.tfplan
 terraform apply "setup.tfplan"
 ```
 
-### Listener Lambda
+### Upload Listener Lambda
 
 Navigate to the `upload-listener` directory:
 
@@ -62,26 +62,23 @@ cd upload-listener
 Package and deploy the Lambda function:
 
 ```bash
-rm -rf ./package && rm -rf ./build
-mkdir -p ./package && mkdir -p ./build
-cp listener_lambda.py ./package/
-python -m venv venv
-source venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt -t ./package
-cd ./package
-zip -r9 ../build/upload_listener.zip .
-cd ..
-rm -rf ./package
-deactivate
-
-aws s3 cp build/upload_listener.zip \
-s3://<LAMBDA_BUCKET_NAME>/upload_listener/latest/function.zip
-
-shasum -a 256 build/upload_listener.zip | awk '{print $1}' | xxd -r -p | base64
+./deploy.sh --bucket <LAMBDA_BUCKET_NAME> [--profile <name>] [--region <value>]
 ```
 
-Otaining the SHA sum and use it in the Main Infrastructure section.
+Obtain the uploaded function bundle SHA sum from the script output and use it in the Main Infrastructure section.
+
+### Serverless RESTful Backend API
+
+For each of backend modules build zip bundle and upload it to S3. Get the bundle SHA sum.
+
+```bash
+cd rest-backend
+
+
+./deploy.sh --module <MODULE_NAME> --bucket <LAMBDA_BUCKET_NAME> [--profile <name>] [--region <value>]
+```
+
+Accepted values for module name argument are: `users`, `files`, `results`
 
 ### Main Infrastructure
 
@@ -102,8 +99,8 @@ lambda_bucket                     = "<LAMBDA_BUCKET_NAME>"
 upload_listener_lambda_bundle_sha = "<UPLOAD_LISTENER_LAMBDA_BUNDLE_SHA>"
 cognito_domain_prefix             = "<AWS_COGNITO_DOMAIN_PREFIX>"
 users_lambda_bundle_sha           = "<USERS_LAMBDA_BUNDLE_SHA>"
-results_lambda_bundle_sha         = "RESULTS_LAMBDA_BUNDLE_SHA>"
-files_lambda_bundle_sha           = "<FILESLAMBDA_BUNDLE_SHA>"
+results_lambda_bundle_sha         = "<RESULTS_LAMBDA_BUNDLE_SHA>"
+files_lambda_bundle_sha           = "<FILES_LAMBDA_BUNDLE_SHA>"
 ```
 
 Initialize Terraform with the S3 backend:
@@ -118,6 +115,9 @@ Deploy the main infrastructure:
 terraform plan -out main.tfplan
 terraform apply "main.tfplan"
 ```
+
+Get
+api_gateway_id, cognito_user_pool_client_id, cognito_user_pool_domain, cognito_user_pool_id, and cognito_user_pool_resource_server_identifier from terraform output.
 
 To view the state of deployed resources:
 
@@ -145,7 +145,7 @@ docker buildx build --platform=linux/amd64 \
 docker push <ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/video-action-regognizer:latest
 ```
 
-### First admin user
+### Create First Admin User
 
 In ordet to send requests to the deployed serverless RESTful API, you need to create the first admin user in AWS Cognito:
 
@@ -155,18 +155,50 @@ cd rest-backend
 ./init.sh --user-pool-id <value> --email <value> --given-name <value> --family-name <value> --password <value> [--profile <name>] [--region <value>]
 ```
 
-## Updating resources
+## Development
 
-To update the Lambda function:
+### Updating Lambda Functions
 
-1. Re-run the code to build and upload the listener lambda function.
-2. Replace the `upload_listener_lambda_bundle_sha` in `terraform.tfvars` with the newly obtained SHA sum.
+1. Re-run the code to build and upload the lambda function.
+2. Replace the `*_lambda_bundle_sha` in `terraform.tfvars` with the newly obtained SHA sum.
 3. Apply the changes using Terraform:
 
 ```bash
 terraform plan -out main.tfplan
 terraform apply "main.tfplan"
 ```
+
+4. For the rest backend lambda functions, re-deploy the API for `dev` stage from AWS console.
+
+### Run RESTful Backend locally
+
+You can use AWS SAM to build and invoke backend lambda functions locally. You can find some mock event input in `rest-backend/mock-events` directory.
+
+Go to one of the backend lambda functions’ directory and compile TypeScript and build the bundle:
+
+```bash
+cd rest-backend/users # or 'files' or 'results'
+npm run build
+cd ..
+```
+
+Invoke the lambda locally using AWS SAM CLI and the related mock event:
+
+```bash
+sam local invoke VarUsers \
+-e mock-events/createUser.json \
+--template template.yaml \
+--parameter-overrides \
+UserPoolId=<USER_POOL_ID>
+```
+
+## Usage (Analysis MVP)
+
+Upload a mp4 video or a gif file to S3 `<INPUT_BUCKET_NAME>` and see the analysis logs and results in CloudWatch.
+
+## API Documentation
+
+For more information, see our [API Reference](https://github.com/bugfloyd/video-action-recognizer/wiki/API-Reference).
 
 ## LICENSE
 
