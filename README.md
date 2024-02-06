@@ -2,26 +2,39 @@
 
 This project contains all necessary components and services for the Video Action Recognizer application.
 
+## Table of Contents
+
+- [Components](#components)
+- [Deployment](#deployment)
+  - [Terraform Backend Setup](#terraform-backend-setup)
+  - [Listener Lambda](#listener-lambda)
+  - [RESTful Backend API](#restful-backend-api)
+  - [Main Infrastructure](#main-infrastructure)
+  - [Analysis Core](#analysis-core)
+  - [Create First Admin User](#create-first-admin-user)
+- [Development](#development)
+  - [Updating Lambda Functions](#updating-lambda-functions)
+  - [Run RESTful Backend Locally](#run-restful-backend-locally)
+- [Usage (Analysis MVP)](#usage-analysis-mvp)
+- [API Documentation](#api-documentation)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Components
 
-### Serverless Analysis Core
-
+**Serverless Analysis Core**  
 Implemented in Python, this component performs video analysis using TensorFlow and the Movinet kinetics-600 model. It operates as a serverless Fargate task within AWS ECS.
 
-### Upload Listener Lambda
-
+**Upload Listener Lambda**  
 A Python AWS Lambda function that responds to S3 'object put' events by initiating the Analysis Core ECS task to process the uploaded video file.
 
-### Serverless Backend
-
+**Serverless Backend**  
 In development, this component will provide RESTful APIs, facilitating server-side interactions and integrations with AWS services.
 
-### UI
-
+**UI**  
 The user interface is built with TypeScript and React.js, allowing for video or GIF file uploads and presenting analysis results. (Under Development)
 
-### Infrastructure Code
-
+**Infrastructure Code**  
 Infrastructure as Code (IaC) managed through Terraform scripts automates the setup of the required AWS infrastructure.
 
 ## Deployment
@@ -51,7 +64,7 @@ terraform plan -out setup.tfplan
 terraform apply "setup.tfplan"
 ```
 
-### Upload Listener Lambda
+### Listener Lambda
 
 Navigate to the `upload-listener` directory:
 
@@ -67,7 +80,7 @@ Package and deploy the Lambda function:
 
 Obtain the uploaded function bundle SHA sum from the script output and use it in the Main Infrastructure section.
 
-### Serverless RESTful Backend API
+### RESTful Backend API
 
 For each of backend modules build zip bundle and upload it to S3. Get the bundle SHA sum.
 
@@ -170,7 +183,7 @@ terraform apply "main.tfplan"
 
 4. For the rest backend lambda functions, re-deploy the API for `dev` stage from AWS console.
 
-### Run RESTful Backend locally
+### Run RESTful Backend Locally
 
 You can use AWS SAM to build and invoke backend lambda functions locally. You can find some mock event input in `rest-backend/mock-events` directory.
 
@@ -200,6 +213,10 @@ Upload a mp4 video or a gif file to S3 `<INPUT_BUCKET_NAME>` and see the analysi
 
 For more information, see our [API Reference](https://github.com/bugfloyd/video-action-recognizer/wiki/API-Reference).
 
-## LICENSE
+## Contributing
+
+We welcome contributions from the community. If you'd like to contribute, please fork the repository and make your changes, then create a pull request against the main branch.
+
+## License
 
 Code released under the GNU GPL v3 License.
