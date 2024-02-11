@@ -6,16 +6,10 @@ AWS_REGION=""
 
 # Initialize variables for required parameters with empty defaults
 BUCKET_NAME=""
-MODULE=""
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --module)
-      MODULE="$2"
-      shift # past argument
-      shift # past value
-      ;;
     --bucket)
       BUCKET_NAME="$2"
       shift # past argument
@@ -38,20 +32,19 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Check for required parameters
-if [[ -z "$BUCKET_NAME" || -z "$MODULE" ]]; then
+if [[ -z "$BUCKET_NAME" ]]; then
   echo "Error: Missing required parameters."
   echo "Usage: $0 --module <MODULE_NAME> --bucket <LAMBDA_BUCKET_NAME> [--profile <name>] [--region <value>]"
   exit 1
 fi
 
-cd $MODULE || exit 1
-echo "Building function zip bundle for module: $MODULE"
+echo "Building function zip bundle for backend"
 npm run bundle > /dev/null
 
 if [ $? -eq 0 ]; then
-  echo "Uploading function zip bundle for module: $MODULE to S3 bucket: $BUCKET_NAME"
+  echo "Uploading function zip bundle for backend to S3 bucket: $BUCKET_NAME"
   aws s3 cp function.zip \
-  s3://$BUCKET_NAME/rest_backend/$MODULE/function.zip
+  s3://$BUCKET_NAME/rest_backend/function.zip
   if [ $? -eq 0 ]; then
     echo "Uploaded function bundle SHA:"
     shasum -a 256 function.zip | awk '{print $1}' | xxd -r -p | base64
