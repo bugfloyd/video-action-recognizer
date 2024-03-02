@@ -1,7 +1,8 @@
 import {
   AdminCreateUserCommand,
+  ListUsersCommand,
   AdminCreateUserCommandOutput,
-  CognitoIdentityProviderClient,
+  CognitoIdentityProviderClient, ListUsersCommandOutput,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { CreateUserParams } from '../types';
 import { userPoolId } from '../variables';
@@ -39,5 +40,21 @@ export class AWSCognito {
     const createdUser = await client.send(command);
     console.log('Cognito user created:', createdUser);
     return createdUser;
+  }
+
+  async list(
+  ): Promise<ListUsersCommandOutput> {
+    const client = new CognitoIdentityProviderClient({
+      region: this.awsRegion,
+    });
+
+    const command = new ListUsersCommand({
+      UserPoolId: this.userPoolId,
+      Limit: 60
+    });
+
+    const users = await client.send(command);
+    console.log('Got cognito users list:', users);
+    return users;
   }
 }

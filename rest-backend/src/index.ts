@@ -14,6 +14,7 @@ const usersRouter: ServiceRouter = async (event) => {
 
   const { httpMethod, pathParameters } = event;
   const userId = pathParameters ? pathParameters['user_id'] : null;
+  const usersController = new UserController();
 
   // Create a new User
   if (!userId && httpMethod === 'POST') {
@@ -25,11 +26,17 @@ const usersRouter: ServiceRouter = async (event) => {
       throw new UserException(globalCases.invalidBodyJson);
     }
 
-    const usersController = new UserController();
     const createdUser = await usersController.createUser(requestBody);
     return {
       statusCode: 200,
       body: JSON.stringify(createdUser),
+    };
+  } else if (!userId && httpMethod === 'GET') {
+
+    const users = await usersController.getUsers();
+    return {
+      statusCode: 200,
+      body: JSON.stringify(users),
     };
   }
 

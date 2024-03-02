@@ -19,4 +19,9 @@ export class UserController {
     const usersService = new UsersService();
     return await usersService.registerUser(cleanedRequestBody);
   }
+
+  async getUsers(): Promise<APIUser[]> {
+    const usersService = new UsersService();
+    return await usersService.getUsers();
+  }
 }

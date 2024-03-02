@@ -160,7 +160,7 @@ docker push <ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/video-action-regogni
 
 ### Create First Admin User
 
-In ordet to send requests to the deployed serverless RESTful API, you need to create the first admin user in AWS Cognito:
+In order to send requests to the deployed serverless RESTful API, you need to create the first admin user in AWS Cognito:
 
 ```bash
 cd rest-backend
@@ -192,13 +192,12 @@ Go to one of the backend lambda functions’ directory and compile TypeScript an
 ```bash
 cd rest-backend/users # or 'files' or 'results'
 npm run build
-cd ..
 ```
 
 Invoke the lambda locally using AWS SAM CLI and the related mock event:
 
 ```bash
-sam local invoke VarUsers \
+sam local invoke VarBackend \
 -e mock-events/createUser.json \
 --template template.yaml \
 --parameter-overrides \

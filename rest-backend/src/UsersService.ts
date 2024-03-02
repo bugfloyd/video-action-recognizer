@@ -1,10 +1,11 @@
 import {
   AdminCreateUserCommandOutput,
+  ListUsersCommandOutput,
   UserType,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { userCases, UserException } from './UserExceptions';
 import { AWSCognito } from './aws/AWSCognito';
-import { CreateUserParams, APIUser } from './types';
+import { APIUser, CreateUserParams } from './types';
 
 function validateEmail(email: string): boolean {
   const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -61,5 +62,32 @@ export class UsersService {
         ? user.UserLastModifiedDate
         : undefined,
     };
+  }
+
+  async getUsers(): Promise<APIUser[]> {
+    const cognito = new AWSCognito();
+    let listUserResponse: ListUsersCommandOutput;
+
+    try {
+      listUserResponse = await cognito.list();
+    } catch (error) {
+      console.log("Error: ", error)
+      throw new UserException(userCases.unexpextedError);
+    }
+
+    const findUserAttribute = (user: UserType, name: string): string => {
+      return user.Attributes?.find((attr) => attr.Name === name)?.Value || '';
+    };
+
+    return listUserResponse.Users?.map((user) => ({
+      username: user.Username ? user.Username : undefined,
+      email: findUserAttribute(user, 'email'),
+      given_name: findUserAttribute(user, 'given_name'),
+      family_name: findUserAttribute(user, 'family_name'),
+      created_at: user.UserCreateDate ? user.UserCreateDate : undefined,
+      modified_at: user.UserLastModifiedDate
+        ? user.UserLastModifiedDate
+        : undefined,
+    })) || [];
   }
 }

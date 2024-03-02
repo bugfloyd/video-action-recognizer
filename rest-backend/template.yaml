@@ -16,7 +16,7 @@ Resources:
       Handler: dist/index.handler
       Runtime: nodejs18.x
       PackageType: Zip
-      CodeUri: ./users
+      CodeUri: dist
       Environment:
         Variables:
           USER_POOL_ID: !Ref UserPoolId
