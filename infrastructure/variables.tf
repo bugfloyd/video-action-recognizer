@@ -23,18 +23,8 @@ variable "upload_listener_lambda_bundle_sha" {
   type        = string
 }
 
-variable "users_lambda_bundle_sha" {
+variable "rest_backend_lambda_bundle_sha" {
   description = "User lambda function zip sha to be used in source_code_hash"
-  type        = string
-}
-
-variable "files_lambda_bundle_sha" {
-  description = "Files lambda function zip sha to be used in source_code_hash"
-  type        = string
-}
-
-variable "results_lambda_bundle_sha" {
-  description = "Results lambda function zip sha to be used in source_code_hash"
   type        = string
 }
 

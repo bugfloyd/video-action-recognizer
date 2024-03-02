@@ -39,8 +39,8 @@ resource "aws_iam_role" "upload_listener_lambda_exec_role" {
   })
 }
 
-resource "aws_iam_policy" "lambda_logging_policy" {
-  name = "lambda_logging_policy"
+resource "aws_iam_policy" "listener_lambda_logging_policy" {
+  name = "listener_lambda_logging_policy"
   policy = jsonencode({
     Version : "2012-10-17",
     Statement : [
@@ -89,7 +89,7 @@ resource "aws_iam_policy" "lambda_run_ecs_task_policy" {
 }
 resource "aws_iam_role_policy_attachment" "lambda_logs_attachment" {
   role       = aws_iam_role.upload_listener_lambda_exec_role.name
-  policy_arn = aws_iam_policy.lambda_logging_policy.arn
+  policy_arn = aws_iam_policy.listener_lambda_logging_policy.arn
 }
 resource "aws_iam_role_policy_attachment" "lambda_ecs_task_run_attachment" {
   role       = aws_iam_role.upload_listener_lambda_exec_role.name
