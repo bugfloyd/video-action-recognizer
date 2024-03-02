@@ -21,13 +21,6 @@ export class VarException extends Error {
   }
 }
 
-export class ConfigException extends VarException {
-  constructor(errorCase: ErrorCase) {
-    super(errorCase);
-    this.name = 'VarException/Config';
-  }
-}
-
 export const globalCases: ErrorCases = {
   notImplemented: {
     code: 501,

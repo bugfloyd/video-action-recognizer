@@ -17,7 +17,6 @@ export class UserController {
     }
 
     const usersService = new UsersService();
-    const response = await usersService.registerUser(cleanedRequestBody);
-    return response;
+    return await usersService.registerUser(cleanedRequestBody);
   }
 }
