@@ -9,6 +9,8 @@ import { APIUser, CreateUserParams } from '../types/types';
 import { globalCases } from '../exceptions/cases/globalCases';
 import { UserException } from '../exceptions/VarException';
 
+const cognito = new AWSCognito();
+
 function validateEmail(email: string): boolean {
   const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
   return regex.test(email);
@@ -26,9 +28,7 @@ export class UsersService {
       throw new UserException(userCases.createUser.invalidEmail);
     }
 
-    const cognito = new AWSCognito();
     let createUserResponse: AdminCreateUserCommandOutput;
-
     try {
       createUserResponse = await cognito.create({
         email,
@@ -47,7 +47,6 @@ export class UsersService {
     if (!createUserResponse || !createUserResponse.User) {
       throw new UserException(globalCases.unexpectedError);
     }
-
     const user = createUserResponse.User;
 
     const findUserAttribute = (user: UserType, name: string): string => {
@@ -67,9 +66,7 @@ export class UsersService {
   }
 
   async getUsers(): Promise<APIUser[]> {
-    const cognito = new AWSCognito();
     let listUserResponse: ListUsersCommandOutput;
-
     try {
       listUserResponse = await cognito.list();
     } catch (error) {

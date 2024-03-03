@@ -1,6 +1,8 @@
 import { APIUser, CreateUserParams } from '../types/types';
 import { UsersService } from '../services/UsersService';
 
+const usersService = new UsersService();
+
 export class UserController {
   async createUser(requestBody: CreateUserParams): Promise<APIUser> {
     // Validate and clean up the requestBody
@@ -16,12 +18,10 @@ export class UserController {
       }
     }
 
-    const usersService = new UsersService();
     return await usersService.registerUser(cleanedRequestBody);
   }
 
   async getUsers(): Promise<APIUser[]> {
-    const usersService = new UsersService();
     return await usersService.getUsers();
   }
 }

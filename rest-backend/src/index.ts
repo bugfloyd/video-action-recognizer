@@ -26,14 +26,12 @@ const usersRouter: ServiceRouter = async (event) => {
       console.error(error);
       throw new UserException(globalCases.invalidBodyJson);
     }
-
     const createdUser = await usersController.createUser(requestBody);
     return {
       statusCode: 200,
       body: JSON.stringify(createdUser),
     };
   } else if (!userId && httpMethod === 'GET') {
-
     const users = await usersController.getUsers();
     return {
       statusCode: 200,
