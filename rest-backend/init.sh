@@ -63,6 +63,7 @@ if [[ -z "$USER_POOL_ID" || -z "$EMAIL" || -z "$GIVEN_NAME" || -z "$FAMILY_NAME"
 fi
 
 # AWS Cognito command to create a new user in the user pool
+# shellcheck disable=SC2086
 aws cognito-idp admin-create-user \
   --user-pool-id "$USER_POOL_ID" \
   --username "$EMAIL" \
@@ -79,6 +80,7 @@ if [ $? -eq 0 ]; then
   echo "User created successfully."
 
   # AWS Cognito command to set a new user's password
+  # shellcheck disable=SC2086
   aws cognito-idp admin-set-user-password \
     --user-pool-id "$USER_POOL_ID" \
     --username "$EMAIL" \

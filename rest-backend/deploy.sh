@@ -43,8 +43,11 @@ npm run bundle > /dev/null
 
 if [ $? -eq 0 ]; then
   echo "Uploading function zip bundle for backend to S3 bucket: $BUCKET_NAME"
+  # shellcheck disable=SC2086
   aws s3 cp function.zip \
-  s3://$BUCKET_NAME/rest_backend/function.zip
+  s3://"$BUCKET_NAME"/rest_backend/function.zip \
+  $AWS_PROFILE $AWS_REGION > /dev/null
+
   if [ $? -eq 0 ]; then
     echo "Uploaded function bundle SHA:"
     shasum -a 256 function.zip | awk '{print $1}' | xxd -r -p | base64
