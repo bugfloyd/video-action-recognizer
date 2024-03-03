@@ -1,5 +1,5 @@
-import { APIUser, CreateUserParams } from './types';
-import { UsersService } from './UsersService';
+import { APIUser, CreateUserParams } from '../types/types';
+import { UsersService } from '../services/UsersService';
 
 export class UserController {
   async createUser(requestBody: CreateUserParams): Promise<APIUser> {

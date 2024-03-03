@@ -3,9 +3,11 @@ import {
   ListUsersCommandOutput,
   UserType,
 } from '@aws-sdk/client-cognito-identity-provider';
-import { userCases, UserException } from './UserExceptions';
-import { AWSCognito } from './aws/AWSCognito';
-import { APIUser, CreateUserParams } from './types';
+import { userCases } from '../exceptions/cases/userCases';
+import { AWSCognito } from '../aws/AWSCognito';
+import { APIUser, CreateUserParams } from '../types/types';
+import { globalCases } from '../exceptions/cases/globalCases';
+import { UserException } from '../exceptions/VarException';
 
 function validateEmail(email: string): boolean {
   const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -17,11 +19,11 @@ export class UsersService {
     const { email, given_name, family_name } = params;
 
     if (!email || !given_name) {
-      throw new UserException(userCases.createUserMissingParams);
+      throw new UserException(userCases.createUser.createUserMissingParams);
     }
 
     if (!validateEmail(email)) {
-      throw new UserException(userCases.invalidEmail);
+      throw new UserException(userCases.createUser.invalidEmail);
     }
 
     const cognito = new AWSCognito();
@@ -36,14 +38,14 @@ export class UsersService {
     } catch (error) {
       if (error instanceof Error) {
         if (error.name === 'UsernameExistsException') {
-          throw new UserException(userCases.userExist);
+          throw new UserException(userCases.createUser.userExist);
         }
       }
-      throw new UserException(userCases.unexpextedError);
+      throw new UserException(globalCases.unexpectedError);
     }
 
     if (!createUserResponse || !createUserResponse.User) {
-      throw new UserException(userCases.unexpextedError);
+      throw new UserException(globalCases.unexpectedError);
     }
 
     const user = createUserResponse.User;
@@ -72,7 +74,7 @@ export class UsersService {
       listUserResponse = await cognito.list();
     } catch (error) {
       console.log("Error: ", error)
-      throw new UserException(userCases.unexpextedError);
+      throw new UserException(globalCases.unexpectedError);
     }
 
     const findUserAttribute = (user: UserType, name: string): string => {

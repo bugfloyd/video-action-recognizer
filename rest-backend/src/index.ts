@@ -1,15 +1,16 @@
-import { UserController } from './UsersController';
-import { VarException, configCases, globalCases } from './shared/exceptions';
+import { UserController } from './controllers/UsersController';
+import { UserException, VarException } from './exceptions/VarException';
 import { userPoolId } from './variables';
-import { UserException } from './UserExceptions';
-import { ServiceRouter } from './shared/types';
+import { ServiceRouter } from './types/types';
+import { awsRegion } from './variables';
+import { globalCases } from './exceptions/cases/globalCases';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { awsRegion } from './shared/variables';
+
 
 const usersRouter: ServiceRouter = async (event) => {
   if (!userPoolId) {
     console.error('ERROR - No USER_POOL_ID environment variable found');
-    throw new VarException(configCases.badConfig);
+    throw new VarException(globalCases.badConfig);
   }
 
   const { httpMethod, pathParameters } = event;
@@ -49,7 +50,7 @@ export const handler = async (
   const validateSystemConfig = () => {
     if (!awsRegion) {
       console.error('ERROR - No REGION environment variable found');
-      throw new VarException(configCases.badConfig);
+      throw new VarException(globalCases.badConfig);
     }
   };
 

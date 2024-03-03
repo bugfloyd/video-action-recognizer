@@ -4,9 +4,9 @@ import {
   AdminCreateUserCommandOutput,
   CognitoIdentityProviderClient, ListUsersCommandOutput,
 } from '@aws-sdk/client-cognito-identity-provider';
-import { CreateUserParams } from '../types';
+import { CreateUserParams } from '../types/types';
 import { userPoolId } from '../variables';
-import { awsRegion } from '../shared/variables';
+import { awsRegion } from '../variables';
 
 export class AWSCognito {
   private awsRegion: string;
