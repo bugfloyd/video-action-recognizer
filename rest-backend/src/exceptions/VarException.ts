@@ -3,14 +3,6 @@ export interface ErrorCase {
   message: string;
 }
 
-export type EndpointErrorCases = {
-  [endpointErrorCase: string]: ErrorCase;
-};
-
-export type ServiceErrorCases = {
-  [endpointName: string]: EndpointErrorCases
-};
-
 export class VarException extends Error {
   code: number; // http error code
 

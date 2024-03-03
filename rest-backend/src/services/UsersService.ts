@@ -3,11 +3,11 @@ import {
   ListUsersCommandOutput,
   UserType,
 } from '@aws-sdk/client-cognito-identity-provider';
-import { userCases } from '../exceptions/cases/userCases';
 import { AWSCognito } from '../aws/AWSCognito';
 import { APIUser, CreateUserParams } from '../types/types';
 import { globalCases } from '../exceptions/cases/globalCases';
 import { UserException } from '../exceptions/VarException';
+import { userCases } from '../exceptions/cases/userCases';
 
 const cognito = new AWSCognito();
 

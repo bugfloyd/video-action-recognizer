@@ -1,6 +1,4 @@
-import { EndpointErrorCases } from '../VarException';
-
-export const globalCases: EndpointErrorCases = {
+export const globalCases = {
   unexpectedError: {
     code: 500,
     message: 'An unexpected error happened',
@@ -17,4 +15,4 @@ export const globalCases: EndpointErrorCases = {
     code: 500,
     message: 'Something went wrong. Please try again later.',
   },
-};
+} as const;

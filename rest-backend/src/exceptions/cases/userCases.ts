@@ -1,6 +1,5 @@
-import { ServiceErrorCases } from '../VarException';
 
-export const userCases: ServiceErrorCases = {
+export const userCases = {
   createUser: {
     createUserMissingParams: {
       code: 400,
@@ -13,12 +12,12 @@ export const userCases: ServiceErrorCases = {
     userExist: {
       code: 409,
       message: 'An account with the given email already exists.',
-    }
+    },
   },
   getUsers: {
     noUsersFound: {
       code: 409,
       message: 'There is no user',
     },
-  }
-};
+  },
+} as const;
