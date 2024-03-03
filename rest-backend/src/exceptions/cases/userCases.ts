@@ -1,4 +1,3 @@
-
 export const userCases = {
   createUser: {
     createUserMissingParams: {
@@ -14,10 +13,11 @@ export const userCases = {
       message: 'An account with the given email already exists.',
     },
   },
-  getUsers: {
-    noUsersFound: {
-      code: 409,
-      message: 'There is no user',
+  getUsers: {},
+  getUser: {
+    UserNotFound: {
+      code: 404,
+      message: 'No user account found using the provided username.',
     },
   },
 } as const;

@@ -6,7 +6,6 @@ import { awsRegion } from './variables';
 import { globalCases } from './exceptions/cases/globalCases';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
-
 const usersRouter: ServiceRouter = async (event) => {
   if (!userPoolId) {
     console.error('ERROR - No USER_POOL_ID environment variable found');
@@ -36,6 +35,12 @@ const usersRouter: ServiceRouter = async (event) => {
     return {
       statusCode: 200,
       body: JSON.stringify(users),
+    };
+  } else if (userId && httpMethod === 'GET') {
+    const user = await usersController.getUser(userId);
+    return {
+      statusCode: 200,
+      body: JSON.stringify(user),
     };
   }
 

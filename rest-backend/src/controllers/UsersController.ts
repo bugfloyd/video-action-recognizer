@@ -24,4 +24,8 @@ export class UserController {
   async getUsers(): Promise<APIUser[]> {
     return await usersService.getUsers();
   }
+
+  async getUser(username: string): Promise<APIUser> {
+    return await usersService.getUser(username);
+  }
 }

@@ -1,30 +1,32 @@
 import {
   AdminCreateUserCommand,
-  ListUsersCommand,
   AdminCreateUserCommandOutput,
-  CognitoIdentityProviderClient, ListUsersCommandOutput,
+  AdminGetUserCommand,
+  AdminGetUserCommandOutput,
+  CognitoIdentityProviderClient,
+  ListUsersCommand,
+  ListUsersCommandOutput,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { CreateUserParams } from '../types/types';
-import { userPoolId } from '../variables';
-import { awsRegion } from '../variables';
+import { awsRegion, userPoolId } from '../variables';
 
 export class AWSCognito {
-  private awsRegion: string;
-  private userPoolId: string;
+  private readonly awsRegion: string;
+  private readonly userPoolId: string;
+  private readonly client: CognitoIdentityProviderClient;
 
   constructor() {
     this.awsRegion = awsRegion;
     this.userPoolId = userPoolId;
+    this.client = new CognitoIdentityProviderClient({
+      region: this.awsRegion,
+    });
   }
 
-  async create(
+  async createUser(
     params: CreateUserParams
   ): Promise<AdminCreateUserCommandOutput> {
     const { given_name, family_name, email } = params;
-
-    const client = new CognitoIdentityProviderClient({
-      region: this.awsRegion,
-    });
 
     const command = new AdminCreateUserCommand({
       UserPoolId: this.userPoolId,
@@ -37,24 +39,24 @@ export class AWSCognito {
       MessageAction: 'SUPPRESS',
     });
 
-    const createdUser = await client.send(command);
-    console.log('Cognito user created:', createdUser);
-    return createdUser;
+    return await this.client.send(command);
   }
 
-  async list(
-  ): Promise<ListUsersCommandOutput> {
-    const client = new CognitoIdentityProviderClient({
-      region: this.awsRegion,
-    });
-
+  async listUsers(): Promise<ListUsersCommandOutput> {
     const command = new ListUsersCommand({
       UserPoolId: this.userPoolId,
-      Limit: 60
+      Limit: 60,
     });
 
-    const users = await client.send(command);
-    console.log('Got cognito users list:', users);
-    return users;
+    return await this.client.send(command);
+  }
+
+  async getUser(username: string): Promise<AdminGetUserCommandOutput> {
+    const command = new AdminGetUserCommand({
+      UserPoolId: this.userPoolId,
+      Username: username,
+    });
+
+    return await this.client.send(command);
   }
 }

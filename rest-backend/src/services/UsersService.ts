@@ -1,5 +1,6 @@
 import {
   AdminCreateUserCommandOutput,
+  AdminGetUserCommandOutput,
   ListUsersCommandOutput,
   UserType,
 } from '@aws-sdk/client-cognito-identity-provider';
@@ -8,6 +9,7 @@ import { APIUser, CreateUserParams } from '../types/types';
 import { globalCases } from '../exceptions/cases/globalCases';
 import { UserException } from '../exceptions/VarException';
 import { userCases } from '../exceptions/cases/userCases';
+import { AdminGetUserResponse } from '@aws-sdk/client-cognito-identity-provider/dist-types/models/models_0';
 
 const cognito = new AWSCognito();
 
@@ -30,7 +32,7 @@ export class UsersService {
 
     let createUserResponse: AdminCreateUserCommandOutput;
     try {
-      createUserResponse = await cognito.create({
+      createUserResponse = await cognito.createUser({
         email,
         given_name,
         family_name,
@@ -68,9 +70,9 @@ export class UsersService {
   async getUsers(): Promise<APIUser[]> {
     let listUserResponse: ListUsersCommandOutput;
     try {
-      listUserResponse = await cognito.list();
+      listUserResponse = await cognito.listUsers();
     } catch (error) {
-      console.log("Error: ", error)
+      console.log('Error: ', error);
       throw new UserException(globalCases.unexpectedError);
     }
 
@@ -78,7 +80,39 @@ export class UsersService {
       return user.Attributes?.find((attr) => attr.Name === name)?.Value || '';
     };
 
-    return listUserResponse.Users?.map((user) => ({
+    return (
+      listUserResponse.Users?.map((user) => ({
+        username: user.Username ? user.Username : undefined,
+        email: findUserAttribute(user, 'email'),
+        given_name: findUserAttribute(user, 'given_name'),
+        family_name: findUserAttribute(user, 'family_name'),
+        created_at: user.UserCreateDate ? user.UserCreateDate : undefined,
+        modified_at: user.UserLastModifiedDate
+          ? user.UserLastModifiedDate
+          : undefined,
+      })) || []
+    );
+  }
+
+  async getUser(username: string): Promise<APIUser> {
+    let user: AdminGetUserCommandOutput;
+    try {
+      user = await cognito.getUser(username);
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.name === 'UserNotFoundException') {
+          throw new UserException(userCases.getUser.UserNotFound);
+        }
+      }
+      console.log('Error: ', error);
+      throw new UserException(globalCases.unexpectedError);
+    }
+
+    const findUserAttribute = (user: AdminGetUserResponse, attribute: string): string => {
+      return user.UserAttributes?.find((attr) => attr.Name === attribute)?.Value || '';
+    };
+
+    return {
       username: user.Username ? user.Username : undefined,
       email: findUserAttribute(user, 'email'),
       given_name: findUserAttribute(user, 'given_name'),
@@ -87,6 +121,6 @@ export class UsersService {
       modified_at: user.UserLastModifiedDate
         ? user.UserLastModifiedDate
         : undefined,
-    })) || [];
+    };
   }
 }
