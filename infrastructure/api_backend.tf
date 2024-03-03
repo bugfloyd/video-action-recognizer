@@ -185,7 +185,8 @@ resource "aws_iam_policy" "lambda_cognito_policy" {
       {
         Action = [
           "cognito-idp:ListUsers",
-          "cognito-idp:AdminCreateUser"
+          "cognito-idp:AdminCreateUser",
+          "cognito-idp:AdminGetUser"
         ],
         Effect   = "Allow",
         Resource = "arn:aws:cognito-idp:*:*:userpool/${aws_cognito_user_pool.main.id}"
