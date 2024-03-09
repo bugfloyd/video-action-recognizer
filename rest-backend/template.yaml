@@ -10,7 +10,7 @@ Parameters:
     Default: eu-central-1
 
 Resources:
-  VarUsers:
+  VarBackend:
     Type: AWS::Serverless::Function
     Properties:
       Handler: dist/index.handler
