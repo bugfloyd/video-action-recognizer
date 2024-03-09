@@ -49,8 +49,11 @@ if [ $? -eq 0 ]; then
   $AWS_PROFILE $AWS_REGION > /dev/null
 
   if [ $? -eq 0 ]; then
-    echo "Uploaded function bundle SHA:"
-    shasum -a 256 function.zip | awk '{print $1}' | xxd -r -p | base64
+#    echo "Uploaded function bundle SHA:"
+    BUNDLE_SHA=$(shasum -a 256 function.zip | awk '{print $1}' | xxd -r -p | base64)
+    cd ../infrastructure || exit 1
+    terraform plan -var "rest_backend_lambda_bundle_sha=$BUNDLE_SHA" -out main.tfplan
+    terraform apply "main.tfplan"
   else
     echo "Failed to upload function zip bundle to S3."
   fi
