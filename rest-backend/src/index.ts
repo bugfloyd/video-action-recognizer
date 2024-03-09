@@ -42,6 +42,12 @@ const usersRouter: ServiceRouter = async (event) => {
       statusCode: 200,
       body: JSON.stringify(user),
     };
+  } else if (userId && httpMethod === 'DELETE') {
+    const deleteResult = await usersController.deleteUser(userId);
+    return {
+      statusCode: 200,
+      body: JSON.stringify(deleteResult),
+    };
   }
 
   throw new VarException(globalCases.notImplemented);

@@ -6,6 +6,8 @@ import {
   CognitoIdentityProviderClient,
   ListUsersCommand,
   ListUsersCommandOutput,
+  AdminDeleteUserCommand,
+  AdminDeleteUserCommandOutput
 } from '@aws-sdk/client-cognito-identity-provider';
 import { CreateUserParams } from '../types/types';
 import { awsRegion, userPoolId } from '../variables';
@@ -53,6 +55,15 @@ export class AWSCognito {
 
   async getUser(username: string): Promise<AdminGetUserCommandOutput> {
     const command = new AdminGetUserCommand({
+      UserPoolId: this.userPoolId,
+      Username: username,
+    });
+
+    return await this.client.send(command);
+  }
+
+  async deleteUser(username: string): Promise<AdminDeleteUserCommandOutput> {
+    const command = new AdminDeleteUserCommand({
       UserPoolId: this.userPoolId,
       Username: username,
     });

@@ -128,4 +128,22 @@ export class UsersService {
         : undefined,
     };
   }
+  async deleteUser(username: string): Promise<string> {
+    if (!username || !isUUID4(username)) {
+      throw new UserException(userCases.deleteUser.InvalidUsername);
+    }
+    try {
+      await cognito.deleteUser(username)
+      return 'deleted';
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.name === 'UserNotFoundException') {
+          throw new UserException(userCases.deleteUser.UserNotFound);
+        }
+      }
+      console.log('Error: ', error);
+      throw new UserException(globalCases.unexpectedError);
+    }
+  }
+
 }
