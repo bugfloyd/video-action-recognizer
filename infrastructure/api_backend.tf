@@ -187,6 +187,7 @@ resource "aws_iam_policy" "lambda_cognito_policy" {
           "cognito-idp:ListUsers",
           "cognito-idp:AdminCreateUser",
           "cognito-idp:AdminGetUser",
+          "cognito-idp:AdminUpdateUserAttributes",
           "cognito-idp:AdminDeleteUser"
         ],
         Effect   = "Allow",
