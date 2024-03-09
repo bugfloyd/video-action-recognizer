@@ -1,10 +1,10 @@
 {
     "resource": "/",
     "path": "/",
-    "httpMethod": "POST",
+    "httpMethod": "PATCH",
     "requestContext": {
         "resourcePath": "/",
-        "httpMethod": "POST",
+        "httpMethod": "PATCH",
         "path": "/users/"
     },
     "headers": {
@@ -24,8 +24,10 @@
     },
     "queryStringParameters": null,
     "multiValueQueryStringParameters": null,
-    "pathParameters": null,
+    "pathParameters": {
+        "user_id": "b7385303-e8a3-4f52-b23e-db4a4a0d9f2e"
+    },
     "stageVariables": null,
-    "body": "{\"given_name\": \"Test\",\"family_name\": \"Testi\",\"email\": \"test.email@test.com\"}",
+    "body": "{\"family_name\": \"UpdatedTesti\",\"email\": \"updatedtest.email@test.com\"}",
     "isBase64Encoded": false
 }

@@ -10,6 +10,12 @@ export interface CreateUserParams {
   email: string;
 }
 
+export interface UpdateUserParams {
+  given_name?: string;
+  family_name?: string;
+  email?: string;
+}
+
 export interface APIUser {
   username?: string;
   email: string;

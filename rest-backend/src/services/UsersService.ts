@@ -1,11 +1,11 @@
 import {
   AdminCreateUserCommandOutput,
-  AdminGetUserCommandOutput,
+  AdminGetUserCommandOutput, AdminUpdateUserAttributesCommandOutput,
   ListUsersCommandOutput,
   UserType,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { AWSCognito } from '../aws/AWSCognito';
-import { APIUser, CreateUserParams } from '../types/types';
+import { APIUser, CreateUserParams, UpdateUserParams } from '../types/types';
 import { globalCases } from '../exceptions/cases/globalCases';
 import { UserException } from '../exceptions/VarException';
 import { userCases } from '../exceptions/cases/userCases';
@@ -128,6 +128,45 @@ export class UsersService {
         : undefined,
     };
   }
+
+  async updateUser(username: string, params: Partial<UpdateUserParams>): Promise<APIUser> {
+    const { given_name, family_name, email } = params;
+
+    if (!username || !isUUID4(username)) {
+      throw new UserException(userCases.updateUser.InvalidUsername);
+    }
+
+    if (!given_name && !family_name && !email) {
+      throw new UserException(userCases.updateUser.MissingParams);
+    }
+
+    if (email && !validateEmail(email)) {
+      throw new UserException(userCases.createUser.invalidEmail);
+    }
+
+    let updateUserResponse: AdminUpdateUserAttributesCommandOutput;
+    try {
+      updateUserResponse = await cognito.updateUser(username, params);
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.name === 'UserNotFoundException') {
+          throw new UserException(userCases.updateUser.UserNotFound);
+        }
+        if (error.name === 'AliasExistsException') {
+          throw new UserException(userCases.updateUser.EmailExists);
+        }
+      }
+      console.log("Error: ", error)
+      throw new UserException(globalCases.unexpectedError);
+    }
+
+    if (!updateUserResponse) {
+      console.log("updateUserResponse: ", updateUserResponse)
+      throw new UserException(globalCases.unexpectedError);
+    }
+    return this.getUser(username);
+  }
+
   async deleteUser(username: string): Promise<string> {
     if (!username || !isUUID4(username)) {
       throw new UserException(userCases.deleteUser.InvalidUsername);

@@ -7,9 +7,9 @@ import {
   ListUsersCommand,
   ListUsersCommandOutput,
   AdminDeleteUserCommand,
-  AdminDeleteUserCommandOutput
+  AdminDeleteUserCommandOutput, AdminUpdateUserAttributesCommandOutput, AdminUpdateUserAttributesCommand, AttributeType,
 } from '@aws-sdk/client-cognito-identity-provider';
-import { CreateUserParams } from '../types/types';
+import { CreateUserParams, UpdateUserParams } from '../types/types';
 import { awsRegion, userPoolId } from '../variables';
 
 export class AWSCognito {
@@ -59,6 +59,29 @@ export class AWSCognito {
       Username: username,
     });
 
+    return await this.client.send(command);
+  }
+
+  async updateUser(
+    username: string,
+    params: UpdateUserParams
+  ): Promise<AdminUpdateUserAttributesCommandOutput> {
+    const { given_name, family_name, email } = params;
+    const attributes: AttributeType[] = [];
+    if (given_name) {
+      attributes.push({ Name: 'given_name', Value: given_name });
+    }
+    if (family_name) {
+      attributes.push({ Name: 'family_name', Value: family_name},);
+    }
+    if (email) {
+      attributes.push({ Name: 'email', Value: email });
+    }
+    const command = new AdminUpdateUserAttributesCommand({
+      UserPoolId: this.userPoolId,
+      Username: username,
+      UserAttributes: attributes,
+    });
     return await this.client.send(command);
   }
 

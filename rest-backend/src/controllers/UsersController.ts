@@ -1,4 +1,4 @@
-import { APIUser, CreateUserParams } from '../types/types';
+import { APIUser, CreateUserParams, UpdateUserParams } from '../types/types';
 import { UsersService } from '../services/UsersService';
 
 const usersService = new UsersService();
@@ -17,7 +17,6 @@ export class UserController {
         cleanedRequestBody[key] = requestBody[key];
       }
     }
-
     return await usersService.registerUser(cleanedRequestBody);
   }
 
@@ -27,6 +26,22 @@ export class UserController {
 
   async getUser(username: string): Promise<APIUser> {
     return await usersService.getUser(username);
+  }
+
+  async updateUser(username: string, requestBody: UpdateUserParams): Promise<APIUser> {
+    // Validate and clean up the requestBody
+    const validKeys: Array<keyof UpdateUserParams> = [
+      'email',
+      'given_name',
+      'family_name',
+    ];
+    const cleanedRequestBody: Partial<UpdateUserParams> = {};
+    for (const key of validKeys) {
+      if (requestBody && requestBody[key]) {
+        cleanedRequestBody[key] = requestBody[key];
+      }
+    }
+    return await usersService.updateUser(username, cleanedRequestBody);
   }
 
   async deleteUser(username: string): Promise<string> {

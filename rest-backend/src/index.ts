@@ -42,6 +42,19 @@ const usersRouter: ServiceRouter = async (event) => {
       statusCode: 200,
       body: JSON.stringify(user),
     };
+  } else if (userId && httpMethod === 'PATCH') {
+    let requestBody;
+    try {
+      requestBody = event.body ? JSON.parse(event.body) : {};
+    } catch (error) {
+      console.error(error);
+      throw new UserException(globalCases.invalidBodyJson);
+    }
+    const updatedUser = await usersController.updateUser(userId, requestBody);
+    return {
+      statusCode: 200,
+      body: JSON.stringify(updatedUser),
+    };
   } else if (userId && httpMethod === 'DELETE') {
     const deleteResult = await usersController.deleteUser(userId);
     return {
