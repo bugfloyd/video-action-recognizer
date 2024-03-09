@@ -10,6 +10,7 @@ import { globalCases } from '../exceptions/cases/globalCases';
 import { UserException } from '../exceptions/VarException';
 import { userCases } from '../exceptions/cases/userCases';
 import { AdminGetUserResponse } from '@aws-sdk/client-cognito-identity-provider/dist-types/models/models_0';
+import { isUUID4 } from '../utils';
 
 const cognito = new AWSCognito();
 
@@ -95,6 +96,10 @@ export class UsersService {
   }
 
   async getUser(username: string): Promise<APIUser> {
+    if (!username || !isUUID4(username)) {
+      throw new UserException(userCases.getUser.InvalidUsername);
+    }
+
     let user: AdminGetUserCommandOutput;
     try {
       user = await cognito.getUser(username);

@@ -19,5 +19,20 @@ export const userCases = {
       code: 404,
       message: 'No user account found using the provided username.',
     },
+    InvalidUsername: {
+      code: 400,
+      message: 'Invalid username provided'
+    }
   },
+  deleteUser: {
+    UserNotFound: {
+      code: 404,
+      message: 'No user account found using the provided username.',
+    },
+    InvalidUsername: {
+      code: 400,
+      message: 'Invalid username provided'
+    }
+  },
+
 } as const;
