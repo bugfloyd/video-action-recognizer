@@ -13,6 +13,9 @@ resource "aws_lambda_function" "rest_backend_lambda" {
     variables = {
       REGION       = var.aws_region
       USER_POOL_ID = aws_cognito_user_pool.main.id
+      DB_ENDPOINT = aws_rds_cluster.aurora_serverless_cluster.endpoint
+      DB_USER = var.db_user
+      DB_PORT = aws_rds_cluster.aurora_serverless_cluster.port
     }
   }
 }
@@ -192,7 +195,47 @@ resource "aws_iam_policy" "lambda_cognito_policy" {
         ],
         Effect   = "Allow",
         Resource = "arn:aws:cognito-idp:*:*:userpool/${aws_cognito_user_pool.main.id}"
+      },
+      {
+        Action = [
+          "rds-data:*"
+        ],
+        Effect   = "Allow",
+        Resource = aws_rds_cluster.aurora_serverless_cluster.arn
       }
     ]
   })
+}
+
+resource "aws_rds_cluster" "aurora_serverless_cluster" {
+  cluster_identifier   = "var-aurora-cluster1"
+  engine               = "aurora-postgresql"
+#  engine_mode          = "provisioned" # Use "provisioned" for Serverless v2
+  engine_version       = "15.4"
+  database_name        = "varmain"
+  master_username      = var.db_user
+#  master_password      = var.db_password
+  manage_master_user_password = true
+  skip_final_snapshot  = true # Enable for production
+  db_subnet_group_name = aws_db_subnet_group.aurora_subnet_group.name
+  serverlessv2_scaling_configuration {
+    min_capacity = 0.5 # Minimum ACU. The smallest increment is 0.5 ACU for Serverless v2.
+    max_capacity = 2 # Maximum ACU. Adjust based on expected peak load in dev environment.
+  }
+  #  vpc_security_group_ids = [] # ToDo
+}
+
+resource "aws_rds_cluster_instance" "aurora_instance" {
+  engine = "aurora-postgresql"
+  cluster_identifier = aws_rds_cluster.aurora_serverless_cluster.cluster_identifier
+  instance_class     = "db.serverless"
+}
+
+resource "aws_db_subnet_group" "aurora_subnet_group" {
+  name       = "aurora-subnet-group"
+  subnet_ids = [aws_subnet.private_subnet_az1.id, aws_subnet.private_subnet_az2.id]
+
+  tags = {
+    Name = "VAR Aurora Subnet Group"
+  }
 }

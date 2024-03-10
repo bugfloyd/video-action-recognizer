@@ -32,3 +32,9 @@ variable "cognito_domain_prefix" {
   description = "The prefix for the Amazon Cognito domain."
   type        = string
 }
+
+variable "db_user" {
+  description = "Database master user"
+  type = string
+  default = "postgres"
+}
