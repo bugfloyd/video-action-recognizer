@@ -28,4 +28,11 @@ variable "lambda_bucket" {
 variable "github_repo" {
   description = "Github repo to be used to allow github actions to have access to the AWS account via OIDC in this format: <GITHUB_OWNER>/<GITHUB_REPO>"
   type        = string
+  default     = ""
+}
+
+variable "main_domain" {
+  description = "The main domain for which to create the hosted zone"
+  type        = string
+  default     = ""
 }

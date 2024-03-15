@@ -8,6 +8,7 @@ resource "aws_iam_openid_connect_provider" "github" {
 # Create an IAM role for GitHub Actions
 resource "aws_iam_role" "github_actions" {
   name = "github-actions-role"
+  count = var.github_repo != "" ? 1 : 0
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -34,10 +35,11 @@ resource "aws_iam_role" "github_actions" {
 # Attach policies to the IAM role as needed
 # Example: attaching a read-only policy
 resource "aws_iam_role_policy_attachment" "administrator_access" {
-  role       = aws_iam_role.github_actions.name
+  count = length(aws_iam_role.github_actions)
+  role       = aws_iam_role.github_actions[count.index].name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
 output "pipeline_execution_role_arn" {
-  value = aws_iam_role.github_actions.arn
+  value = length(aws_iam_role.github_actions) > 0 ? aws_iam_role.github_actions[0].arn : "NO GITHUB REPO PROVIDED"
 }

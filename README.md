@@ -49,6 +49,10 @@ Navigate to the `infrastructure/init` directory and create a `terraform.tfvars` 
 aws_region             = "<AWS_REGION>"
 terraform_state_bucket = "<TERRAFORM_STATE_BUCKET_NAME>"
 lambda_bucket          = "<LAMBDA_BUCKET_NAME>"
+
+# Optional variables:
+github_repo            = "<GITHUB_REPO>" # e.g. bugfloyd/video-action-recognizer | if you need an IAM role  to be assumed with GitHub WebIdentity
+main_domain            = "<MAIN_DOMAIN_NAME>" # e.g. example.com | if you want to use a custom domain
 ```
 
 Initialize Terraform:

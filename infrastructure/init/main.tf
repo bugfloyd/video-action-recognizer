@@ -25,3 +25,10 @@ resource "aws_dynamodb_table" "terraform_lock" {
 resource "aws_s3_bucket" "lambda_bucket" {
   bucket = var.lambda_bucket
 }
+
+module "domain" {
+  source = "./domain"
+  count = var.main_domain != "" ? 1 : 0
+
+  main_domain = var.main_domain
+}
