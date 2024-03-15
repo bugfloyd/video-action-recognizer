@@ -1,3 +1,8 @@
+variable "github_repo" {
+  description = "Github repo to be used to allow github actions to have access to the AWS account via OIDC in this format: <GITHUB_OWNER>/<GITHUB_REPO>"
+  type        = string
+}
+
 # Create an IAM OIDC identity provider for GitHub Actions
 resource "aws_iam_openid_connect_provider" "github" {
   url             = "https://token.actions.githubusercontent.com"
@@ -8,7 +13,6 @@ resource "aws_iam_openid_connect_provider" "github" {
 # Create an IAM role for GitHub Actions
 resource "aws_iam_role" "github_actions" {
   name = "github-actions-role"
-  count = var.github_repo != "" ? 1 : 0
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -35,11 +39,10 @@ resource "aws_iam_role" "github_actions" {
 # Attach policies to the IAM role as needed
 # Example: attaching a read-only policy
 resource "aws_iam_role_policy_attachment" "administrator_access" {
-  count = length(aws_iam_role.github_actions)
-  role       = aws_iam_role.github_actions[count.index].name
+  role       = aws_iam_role.github_actions.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
 output "pipeline_execution_role_arn" {
-  value = length(aws_iam_role.github_actions) > 0 ? aws_iam_role.github_actions[0].arn : "NO GITHUB REPO PROVIDED"
+  value = aws_iam_role.github_actions.arn
 }

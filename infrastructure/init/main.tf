@@ -32,3 +32,10 @@ module "domain" {
 
   main_domain = var.main_domain
 }
+
+module "github" {
+  source = "./github"
+  count = var.github_repo != "" ? 1 : 0
+
+  github_repo = var.github_repo
+}
