@@ -33,9 +33,21 @@ module "domain" {
   main_domain = var.main_domain
 }
 
+output "name_servers" {
+  value = length(module.domain) > 0 ? module.domain[0].name_servers : ["No domain provided"]
+}
+
+output "zone_id" {
+  value = length(module.domain) > 0 ? module.domain[0].zone_id : "No domain provided"
+}
+
 module "github" {
   source = "./github"
   count = var.github_repo != "" ? 1 : 0
 
   github_repo = var.github_repo
+}
+
+output "github_pipeline_execution_role_arn" {
+  value = length(module.github) > 0 ? module.github[0].pipeline_execution_role_arn : "No GitHub repo provided"
 }
