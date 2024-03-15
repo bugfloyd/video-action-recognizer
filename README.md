@@ -88,7 +88,7 @@ For each of backend modules build zip bundle and upload it to S3. Get the bundle
 cd rest-backend
 
 
-./deploy.sh --module <MODULE_NAME> --bucket <LAMBDA_BUCKET_NAME> [--profile <name>] [--region <value>]
+./deploy.sh --bucket <LAMBDA_BUCKET_NAME> --skip-infra-update true [--profile <name>] [--region <value>]
 ```
 
 Accepted values for module name argument are: `users`, `files`, `results`
@@ -110,10 +110,8 @@ input_bucket                      = "<INPUT_BUCKET_NAME>"
 output_bucket                     = "<OUTPUT_BUCKET_NAME>"
 lambda_bucket                     = "<LAMBDA_BUCKET_NAME>"
 upload_listener_lambda_bundle_sha = "<UPLOAD_LISTENER_LAMBDA_BUNDLE_SHA>"
+rest_backend_lambda_bundle_sha    = "<REST_BACKEND_LAMBDA_BUNDLE_SHA>"
 cognito_domain_prefix             = "<AWS_COGNITO_DOMAIN_PREFIX>"
-users_lambda_bundle_sha           = "<USERS_LAMBDA_BUNDLE_SHA>"
-results_lambda_bundle_sha         = "<RESULTS_LAMBDA_BUNDLE_SHA>"
-files_lambda_bundle_sha           = "<FILES_LAMBDA_BUNDLE_SHA>"
 ```
 
 Initialize Terraform with the S3 backend:

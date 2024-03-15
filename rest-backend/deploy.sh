@@ -15,6 +15,11 @@ while [[ $# -gt 0 ]]; do
       shift # past argument
       shift # past value
       ;;
+    --skip-infra-update)
+      SKIP_INFRA_UPDATE="$2"
+      shift # past argument
+      shift # past value
+      ;;
     --profile)
       AWS_PROFILE="--profile $2"
       shift # past argument
@@ -49,11 +54,15 @@ if [ $? -eq 0 ]; then
   $AWS_PROFILE $AWS_REGION > /dev/null
 
   if [ $? -eq 0 ]; then
-#    echo "Uploaded function bundle SHA:"
     BUNDLE_SHA=$(shasum -a 256 function.zip | awk '{print $1}' | xxd -r -p | base64)
-    cd ../infrastructure || exit 1
-    terraform plan -var "rest_backend_lambda_bundle_sha=$BUNDLE_SHA" -out main.tfplan
-    terraform apply "main.tfplan"
+    if [[ "${SKIP_INFRA_UPDATE,,}" != "true" ]]; then
+      cd ../infrastructure || exit 1
+      terraform plan -var "rest_backend_lambda_bundle_sha=$BUNDLE_SHA" -out main.tfplan
+      terraform apply "main.tfplan"
+    else
+      echo "Uploaded function bundle SHA:"
+      echo "$BUNDLE_SHA"
+    fi
   else
     echo "Failed to upload function zip bundle to S3."
   fi
