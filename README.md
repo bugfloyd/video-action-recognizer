@@ -43,7 +43,7 @@ Ensure the AWS CLI is installed and configured with an access key pair before be
 
 ### Terraform Backend Setup
 
-Navigate to the `infrastructure/setup` directory and create a `terraform.tfvars` file:
+Navigate to the `infrastructure/init` directory and create a `terraform.tfvars` file:
 
 ```hcl
 aws_region             = "<AWS_REGION>"
@@ -60,8 +60,8 @@ terraform init
 Deploy the resources:
 
 ```bash
-terraform plan -out setup.tfplan
-terraform apply "setup.tfplan"
+terraform plan -out init.tfplan
+terraform apply "init.tfplan"
 ```
 
 ### Listener Lambda
