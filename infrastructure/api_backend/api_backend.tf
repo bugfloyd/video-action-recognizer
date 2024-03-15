@@ -233,7 +233,7 @@ resource "aws_rds_cluster_instance" "aurora_instance" {
 
 resource "aws_db_subnet_group" "aurora_subnet_group" {
   name       = "aurora-subnet-group"
-  subnet_ids = [aws_subnet.private_subnet_az1.id, aws_subnet.private_subnet_az2.id]
+  subnet_ids = [var.private_subnet_id_az1, var.private_subnet_id_az2]
 
   tags = {
     Name = "VAR Aurora Subnet Group"
