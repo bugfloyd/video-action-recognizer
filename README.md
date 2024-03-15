@@ -116,6 +116,10 @@ lambda_bucket                     = "<LAMBDA_BUCKET_NAME>"
 upload_listener_lambda_bundle_sha = "<UPLOAD_LISTENER_LAMBDA_BUNDLE_SHA>"
 rest_backend_lambda_bundle_sha    = "<REST_BACKEND_LAMBDA_BUNDLE_SHA>"
 cognito_domain_prefix             = "<AWS_COGNITO_DOMAIN_PREFIX>"
+
+# Optional:
+setup_vpn                         = true
+main_domain_zone_id               = "<MAIN_HOSTED_ZONE_ID>" # Obtained from init infra step
 ```
 
 Initialize Terraform with the S3 backend:
@@ -123,6 +127,8 @@ Initialize Terraform with the S3 backend:
 ```bash
 terraform init -backend-config="backend_config.hcl"
 ```
+
+If you pass `true` for `setup_vpn`, you have to create a CA certificate and a key using OpenSSL and place them in `infrastructure/vpn/vpn_ca.key` and `infrastructure/vpn/vpn_ca.pem`.
 
 Deploy the main infrastructure:
 

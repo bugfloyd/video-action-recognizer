@@ -21,3 +21,14 @@ module "api_backend" {
   private_subnet_id_az1 = aws_subnet.private_subnet_az1.id
   private_subnet_id_az2 = aws_subnet.private_subnet_az2.id
 }
+
+module "vpn" {
+  source = "./vpn"
+  count = var.setup_vpn == true && var.main_domain_zone_id != "" ? 1 : 0
+
+  private_subnet_id_az1 = aws_subnet.private_subnet_az1.id
+  private_subnet_id_az2 = aws_subnet.private_subnet_az2.id
+  private_subnet_cidr_block_az1 = aws_subnet.private_subnet_az1.cidr_block
+  private_subnet_cidr_block_az2 = aws_subnet.private_subnet_az2.cidr_block
+  main_zone_id = var.main_domain_zone_id
+}

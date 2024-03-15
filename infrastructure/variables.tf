@@ -38,3 +38,15 @@ variable "db_user" {
   type = string
   default = "postgres"
 }
+
+variable "setup_vpn" {
+  description = "Should we setup a VPN server?"
+  type = bool
+  default = false
+}
+
+variable "main_domain_zone_id" {
+  description = "Route53 HostedZone ID for the main domain"
+  type = string
+  default = ""
+}
