@@ -31,4 +31,6 @@ module "vpn" {
   private_subnet_cidr_block_az1 = aws_subnet.private_subnet_az1.cidr_block
   private_subnet_cidr_block_az2 = aws_subnet.private_subnet_az2.cidr_block
   main_zone_id = var.main_domain_zone_id
+  vpc_id = aws_vpc.main.id
+  vpn_client_cidr_block = "10.1.0.0/16"
 }

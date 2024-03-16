@@ -33,6 +33,9 @@ resource "aws_subnet" "private_subnet_az2" {
 # Route table associated with the private subnets
 resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.main.id
+  tags = {
+    Name = "PrivateRouteTable"
+  }
 }
 
 # Associate the route table with private subnet AZ1

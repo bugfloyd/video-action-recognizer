@@ -32,5 +32,9 @@ variable "private_subnet_cidr_block_az2" {
 variable "vpn_client_cidr_block" {
   description = "CIDR block for VPN clients"
   type        = string
-  default     = "10.1.0.0/16"
+}
+
+variable "vpc_id" {
+  description = "VPC ID"
+  type        = string
 }
