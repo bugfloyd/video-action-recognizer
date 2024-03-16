@@ -5,6 +5,7 @@ import { ServiceRouter } from './types/types';
 import { awsRegion } from './variables';
 import { globalCases } from './exceptions/cases/globalCases';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import 'reflect-metadata';
 
 const usersRouter: ServiceRouter = async (event) => {
   if (!userPoolId) {
