@@ -33,3 +33,8 @@ variable "private_subnet_id_az2" {
   description = "ID of the private subnet in AZ2"
   type        = string
 }
+
+variable "vpc_id" {
+  description = "ID of theVPC"
+  type        = string
+}
