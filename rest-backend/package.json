@@ -1,5 +1,5 @@
 {
-    "name": "users",
+    "name": "rest-api-backend",
     "version": "1.0.0",
     "description": "AWS Lambda function in TypeScript for user management",
     "scripts": {
@@ -17,9 +17,6 @@
         "typescript": "^5.3.3"
     },
     "dependencies": {
-        "@aws-sdk/client-cognito-identity-provider": "^3.470.0",
-        "pg": "^8.11.3",
-        "reflect-metadata": "^0.2.1",
-        "typeorm": "^0.3.20"
+        "@aws-sdk/client-cognito-identity-provider": "^3.470.0"
     }
 }
