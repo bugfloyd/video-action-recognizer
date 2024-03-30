@@ -19,7 +19,7 @@ function validateEmail(email: string): boolean {
   return regex.test(email);
 }
 
-export class UsersService {
+export class UserService {
   async registerUser(params: Partial<CreateUserParams>): Promise<APIUser> {
     const { email, given_name, family_name } = params;
 

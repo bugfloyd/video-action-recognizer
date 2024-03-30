@@ -1,4 +1,4 @@
-import { UserController } from './controllers/UsersController';
+import { UserController } from './controllers/userController';
 import { UserException, VarException } from './exceptions/VarException';
 import { userPoolId } from './variables';
 import { ServiceRouter } from './types/types';

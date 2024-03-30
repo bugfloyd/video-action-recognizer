@@ -31,7 +31,7 @@ export const userCases = {
     },
     MissingParams: {
       code: 400,
-      message: 'One of email or name fields are required',
+      message: 'One of email or name fields are required.',
     },
     InvalidEmail: {
       code: 400,
