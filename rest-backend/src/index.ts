@@ -76,10 +76,8 @@ export const handler = async (
     }
   };
 
-  try {
-    validateSystemConfig();
-    return await usersRouter(event);
-  } catch (error) {
+  const handleError = (error: unknown): APIGatewayProxyResult => {
+    console.log('ERROR', error);
     if (error instanceof VarException) {
       return {
         statusCode: error.code,
@@ -95,5 +93,12 @@ export const handler = async (
         }),
       };
     }
+  }
+
+  try {
+    validateSystemConfig();
+    return await usersRouter(event);
+  } catch (error) {
+    return handleError(error)
   }
 };
