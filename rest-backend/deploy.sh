@@ -44,7 +44,12 @@ if [[ -z "$BUCKET_NAME" ]]; then
 fi
 
 echo "Building function zip bundle for backend"
-npm run bundle > /dev/null
+npm run clean
+rm -f function.zip
+npm run build
+cp package*.json dist
+npm install --omit=dev --prefix ./dist
+zip -r function.zip dist > /dev/null
 
 if [ $? -eq 0 ]; then
   echo "Uploading function zip bundle for backend to S3 bucket: $BUCKET_NAME"

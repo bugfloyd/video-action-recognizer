@@ -4,8 +4,7 @@
     "description": "AWS Lambda function in TypeScript for user management",
     "scripts": {
         "build": "tsc",
-        "clean": "rm -rf dist && rm -f function.zip",
-        "bundle": "npm run clean && npm run build && zip -r function.zip dist"
+        "clean": "rm -rf dist"
     },
     "devDependencies": {
         "@types/aws-lambda": "^8.10.130",
