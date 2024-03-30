@@ -54,6 +54,11 @@ resource "aws_lambda_permission" "rest_backend_lambda_permission" {
   source_arn = "${aws_api_gateway_rest_api.var_rest_backend.execution_arn}/*/*"
 }
 
+resource "aws_iam_role_policy_attachment" "rest_backend_lambda_dynamodb_policy_attachment" {
+  role       = aws_iam_role.rest_backend_lambda_exec_role.name
+  policy_arn = aws_iam_policy.lambda_dynamodb_policy.arn
+}
+
 # API Gateway resources
 resource "aws_api_gateway_resource" "users_resource" {
   rest_api_id = aws_api_gateway_rest_api.var_rest_backend.id
@@ -194,4 +199,59 @@ resource "aws_iam_policy" "lambda_cognito_policy" {
       }
     ]
   })
+}
+
+resource "aws_iam_policy" "lambda_dynamodb_policy" {
+  name        = "VarManageDynamoDBLambdaPolicy"
+  description = "Policy to allow Lambda function to manage DynamoDB"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:Query",
+          "dynamodb:Scan",
+          "dynamodb:BatchGetItem",
+          "dynamodb:BatchWriteItem",
+          "dynamodb:DescribeTable"
+        ],
+        Effect   = "Allow",
+        Resource = aws_dynamodb_table.main.arn
+      }
+    ]
+  })
+}
+
+resource "aws_dynamodb_table" "main" {
+  name         = "VarMain"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "pk"
+  range_key    = "sk"
+
+  attribute {
+    name = "pk"
+    type = "S"
+  }
+
+  attribute {
+    name = "sk"
+    type = "S"
+  }
+
+  attribute {
+    name = "type"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "TypeGSI"
+    hash_key        = "type"
+    range_key       = "sk"
+    projection_type = "ALL"
+  }
 }

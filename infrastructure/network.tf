@@ -50,7 +50,40 @@ resource "aws_route_table_association" "private_az2_association" {
   route_table_id = aws_route_table.private_route_table.id
 }
 
-# S3 VPC Endpoint for private access to S3 within the VPC
+# Security group for ECS task
+resource "aws_security_group" "analysis_core_sg" {
+  vpc_id      = aws_vpc.main.id
+  description = "Security group for ECS tasks"
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "EcsTaskSG"
+  }
+}
+
+# Security group for Lambda functions
+resource "aws_security_group" "upload_listener_lambda_sg" {
+  vpc_id      = aws_vpc.main.id
+  description = "Security group for Lambda functions"
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name = "LambdaSG"
+  }
+}
+
+# VPC Endpoints to provide access to AWS services in private subnets
 resource "aws_vpc_endpoint" "s3" {
   vpc_id            = aws_vpc.main.id
   service_name      = "com.amazonaws.${var.aws_region}.s3"
@@ -64,7 +97,6 @@ resource "aws_vpc_endpoint" "s3" {
   }
 }
 
-# ECR API endpoint
 resource "aws_vpc_endpoint" "ecr_api" {
   vpc_id              = aws_vpc.main.id
   service_name        = "com.amazonaws.${var.aws_region}.ecr.api"
@@ -77,8 +109,7 @@ resource "aws_vpc_endpoint" "ecr_api" {
   }
 }
 
-# ECR Docker endpoint
-resource "aws_vpc_endpoint" "ecr_dkr" {
+resource "aws_vpc_endpoint" "ecr_docker" {
   vpc_id              = aws_vpc.main.id
   service_name        = "com.amazonaws.${var.aws_region}.ecr.dkr"
   vpc_endpoint_type   = "Interface"
@@ -90,7 +121,6 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
   }
 }
 
-# Cloudwatch endpoint
 resource "aws_vpc_endpoint" "cloudwatch_logs" {
   vpc_id              = aws_vpc.main.id
   service_name        = "com.amazonaws.${var.aws_region}.logs"
@@ -103,7 +133,6 @@ resource "aws_vpc_endpoint" "cloudwatch_logs" {
   }
 }
 
-# Cloudwatch endpoint
 resource "aws_vpc_endpoint" "cloudwatch_monitoring" {
   vpc_id              = aws_vpc.main.id
   service_name        = "com.amazonaws.${var.aws_region}.monitoring"
@@ -137,38 +166,5 @@ resource "aws_security_group" "vpc_endpoints" {
   }
   tags = {
     Name = "VpcEndpoints"
-  }
-}
-
-# Security group for ECS task
-resource "aws_security_group" "analysis_core_sg" {
-  vpc_id      = aws_vpc.main.id
-  description = "Security group for ECS tasks"
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "EcsTaskSG"
-  }
-}
-
-# Security group for Lambda functions
-resource "aws_security_group" "upload_listener_lambda_sg" {
-  vpc_id      = aws_vpc.main.id
-  description = "Security group for Lambda functions"
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  tags = {
-    Name = "LambdaSG"
   }
 }
