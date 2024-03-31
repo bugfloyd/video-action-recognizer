@@ -3,8 +3,10 @@ import { VarException } from './exceptions/VarException';
 import { globalCases } from './exceptions/cases/globalCases';
 import { UserController } from './controllers/userController';
 import { ServiceRouter } from './types/types';
+import { FileController } from './controllers/fileController';
 
 const usersController = new UserController();
+const fileController = new FileController();
 
 type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
@@ -44,7 +46,21 @@ const routeHandlers: RouteDefinition = {
       ),
     DELETE: (_event, pathParams) =>
       usersController.deleteUser(getParam(pathParams, 'userId')),
-  }
+  },
+  '/files': {
+    // GET: () =>
+    //   fileController.getFiles(),
+    POST: (event: APIGatewayProxyEvent) =>
+      fileController.createFile(parseBody(event)),
+  },
+  '/files/:fileId': {
+    // GET: (event: APIGatewayProxyEvent) =>
+    //   fileController.getUFile(parseFileId(event)),
+    // PATCH: (event: APIGatewayProxyEvent) =>
+    //   fileController.updateFile(parseFileId(event), parseBody(event)),
+    // DELETE: (event: APIGatewayProxyEvent) =>
+    //   fileController.deleteFile(parseFileId(event)),
+  },
 };
 
 type PathParams = Record<string, string>;

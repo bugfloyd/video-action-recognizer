@@ -9,6 +9,7 @@
     "devDependencies": {
         "@types/aws-lambda": "^8.10.130",
         "@types/node": "^20.11.25",
+        "@types/uuid": "^9.0.8",
         "@typescript-eslint/eslint-plugin": "^6.13.2",
         "@typescript-eslint/parser": "^6.13.2",
         "eslint": "^8.55.0",
@@ -16,6 +17,8 @@
         "typescript": "^5.3.3"
     },
     "dependencies": {
-        "@aws-sdk/client-cognito-identity-provider": "^3.470.0"
+        "@aws-sdk/client-cognito-identity-provider": "^3.470.0",
+        "dynamoose": "^4.0.0",
+        "uuid": "^9.0.1"
     }
 }
