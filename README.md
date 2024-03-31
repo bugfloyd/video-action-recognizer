@@ -198,7 +198,7 @@ You can use AWS SAM to build and invoke backend lambda functions locally. You ca
 Go to one of the backend lambda functions’ directory and compile TypeScript and build the bundle:
 
 ```bash
-cd rest-backend/users # or 'files' or 'results'
+cd rest-backend
 npm run build
 ```
 

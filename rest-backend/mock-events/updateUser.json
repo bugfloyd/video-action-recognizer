@@ -1,6 +1,6 @@
 {
     "resource": "/",
-    "path": "/",
+    "path": "/users/571a9f68-3a49-48ab-8778-8fdc69d5e09d",
     "httpMethod": "PATCH",
     "requestContext": {
         "resourcePath": "/",
@@ -25,7 +25,7 @@
     "queryStringParameters": null,
     "multiValueQueryStringParameters": null,
     "pathParameters": {
-        "user_id": "b7385303-e8a3-4f52-b23e-db4a4a0d9f2e"
+        "user_id": "571a9f68-3a49-48ab-8778-8fdc69d5e09d"
     },
     "stageVariables": null,
     "body": "{\"family_name\": \"UpdatedTesti\",\"email\": \"updatedtest.email@test.com\"}",

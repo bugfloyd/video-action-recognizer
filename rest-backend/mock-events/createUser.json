@@ -1,6 +1,6 @@
 {
     "resource": "/",
-    "path": "/",
+    "path": "/users/",
     "httpMethod": "POST",
     "requestContext": {
         "resourcePath": "/",

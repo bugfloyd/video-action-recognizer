@@ -1,6 +1,6 @@
 {
     "resource": "/",
-    "path": "/",
+    "path": "/users/571a9f68-3a49-48ab-8778-8fdc69d5e09d",
     "httpMethod": "GET",
     "requestContext": {
         "resourcePath": "/",
@@ -25,7 +25,7 @@
     "queryStringParameters": null,
     "multiValueQueryStringParameters": null,
     "pathParameters": {
-        "user_id": "76fc20c7-0ead-455c-9ed8-f5790abf069a"
+        "user_id": "571a9f68-3a49-48ab-8778-8fdc69d5e09d"
     },
     "stageVariables": null,
     "body": null,

@@ -7,6 +7,10 @@ export const globalCases = {
     code: 501,
     message: 'Not implemented',
   },
+  invalidPathParams: {
+    code: 400,
+    message: 'Invalid path parameters provided.',
+  },
   invalidBodyJson: {
     code: 400,
     message: 'Invalid JSON provided as the request body',
