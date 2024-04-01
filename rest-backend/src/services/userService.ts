@@ -73,7 +73,6 @@ export class UserService {
     try {
       listUserResponse = await cognito.listUsers();
     } catch (error) {
-      console.log('Error: ', error);
       throw new UserException(globalCases.unexpectedError);
     }
 
@@ -167,7 +166,7 @@ export class UserService {
     return this.getUser(username);
   }
 
-  async deleteUser(username: string): Promise<string> {
+  async deleteUser(username: string): Promise<'deleted'> {
     if (!username || !isUUID4(username)) {
       throw new UserException(userCases.deleteUser.InvalidUsername);
     }
@@ -180,9 +179,7 @@ export class UserService {
           throw new UserException(userCases.deleteUser.UserNotFound);
         }
       }
-      console.log('Error: ', error);
       throw new UserException(globalCases.unexpectedError);
     }
   }
-
 }

@@ -44,7 +44,7 @@ export class UserController {
     return await usersService.updateUser(username, cleanedRequestBody);
   }
 
-  async deleteUser(username: string): Promise<string> {
+  async deleteUser(username: string): Promise<'deleted'> {
     return await usersService.deleteUser(username);
   }
 }

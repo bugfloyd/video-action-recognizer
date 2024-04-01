@@ -1,5 +1,9 @@
 import { VarException } from '../exceptions/VarException';
-import { CreateVideoFileParams, VideoFile } from '../types/videoFile';
+import {
+  CreateVideoFileParams,
+  UpdateVideoFileParams,
+  VideoFile,
+} from '../types/videoFile';
 import { fileCases } from '../exceptions/cases/fileCases';
 import { isUUID4 } from '../utils';
 import fileRepository from '../repositories/fileRepository';
@@ -62,5 +66,23 @@ export class FileService {
 
   async getFile(userId: string, fileId: string): Promise<VideoFile> {
     return fileRepository.getFile(userId, fileId);
+  }
+
+  async updateFile(
+    userId: string,
+    fileId: string,
+    params: Partial<UpdateVideoFileParams>
+  ): Promise<VideoFile> {
+    const { name } = params;
+    if (name && !validateName(name)) {
+      throw new VarException(fileCases.createFile.InvalidName);
+    }
+
+    return await fileRepository.updateFile(userId, fileId, params);
+  }
+
+  async deleteFile(userId: string, fileId: string): Promise<'deleted'> {
+    await fileRepository.deleteFile(userId, fileId);
+    return 'deleted';
   }
 }

@@ -13,7 +13,7 @@ type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 type RouteHandler = (
   event: APIGatewayProxyEvent,
   pathParams: PathParams
-) => Promise<object | string>;
+) => Promise<object | 'deleted'>;
 
 interface RouteDefinition {
   [pattern: string]: {
@@ -58,10 +58,17 @@ const routeHandlers: RouteDefinition = {
         getParam(pathParams, 'userId'),
         getParam(pathParams, 'fileId')
       ),
-    // PATCH: (event: APIGatewayProxyEvent) =>
-    //   fileController.updateFile(parseFileId(event), parseBody(event)),
-    // DELETE: (event: APIGatewayProxyEvent) =>
-    //   fileController.deleteFile(parseFileId(event)),
+    PATCH: (event, pathParams) =>
+      fileController.updateFile(
+        getParam(pathParams, 'userId'),
+        getParam(pathParams, 'fileId'),
+        parseBody(event)
+      ),
+    DELETE: (_event, pathParams) =>
+      fileController.deleteFile(
+        getParam(pathParams, 'userId'),
+        getParam(pathParams, 'fileId')
+      ),
   },
 };
 

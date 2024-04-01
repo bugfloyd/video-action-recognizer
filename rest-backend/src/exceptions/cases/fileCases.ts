@@ -37,4 +37,24 @@ export const fileCases = {
       message: 'The requested file not found.',
     },
   },
+  updateFile: {
+    FailedToUpdateFile: {
+      code: 500,
+      message: 'Failed to update the requested file.',
+    },
+    NotFound: {
+      code: 404,
+      message: 'The requested file not found.',
+    },
+  },
+  deleteFile: {
+    FailedToDeleteFile: {
+      code: 500,
+      message: 'Failed to delete the requested file.',
+    },
+    NotFound: {
+      code: 404,
+      message: 'The requested file not found.',
+    },
+  },
 } as const;

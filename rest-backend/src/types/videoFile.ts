@@ -14,3 +14,8 @@ export interface CreateVideoFileParams {
   name: string;
   description?: string;
 }
+
+export interface UpdateVideoFileParams {
+  name?: string;
+  description?: string;
+}
