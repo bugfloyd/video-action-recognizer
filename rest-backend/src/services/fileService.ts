@@ -55,4 +55,8 @@ export class FileService {
 
     return await fileRepository.createFile(createFileParams);
   }
+
+  async getFiles(): Promise<VideoFile[]> {
+    return fileRepository.getAllFiles();
+  }
 }

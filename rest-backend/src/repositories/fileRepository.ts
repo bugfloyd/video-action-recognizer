@@ -34,6 +34,22 @@ class FileRepository {
 
     return convertFileDBToVideoFile(dbFile);
   }
+
+  async getAllFiles(): Promise<VideoFile[]> {
+    const dbFiles: IFile[] = [];
+    try {
+      const results: QueryResponse<IFile> = await FileModel.query('type')
+        .eq('FILE')
+        .using('TypeGSI')
+        .all() // Fetch all records; be cautious with this in production for large datasets
+        .exec();
+
+      dbFiles.push(...results)
+      return dbFiles.map((dbFile) => convertFileDBToVideoFile(dbFile));
+    } catch (e) {
+      throw new VarException(fileCases.getFiles.FailedToQueryFiles, e);
+    }
+  }
 }
 
 const fileRepository = new FileRepository();

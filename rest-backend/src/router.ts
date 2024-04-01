@@ -48,8 +48,8 @@ const routeHandlers: RouteDefinition = {
       usersController.deleteUser(getParam(pathParams, 'userId')),
   },
   '/files': {
-    // GET: () =>
-    //   fileController.getFiles(),
+    GET: () =>
+      fileController.getFiles(),
     POST: (event: APIGatewayProxyEvent) =>
       fileController.createFile(parseBody(event)),
   },

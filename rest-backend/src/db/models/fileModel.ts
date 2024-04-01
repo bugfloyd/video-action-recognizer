@@ -53,7 +53,7 @@ const FileSchema = new dynamoose.Schema(
     type: {
       type: String,
       index: {
-        name: 'TypeIndex',
+        name: 'TypeGSI',
         type: 'global',
       },
     },

@@ -20,4 +20,12 @@ export class FileController {
     }
     return await fileService.createFile(cleanedRequestBody);
   }
+
+  async getFiles(): Promise<VideoFile[]> {
+    return await fileService.getFiles();
+  }
+
+  async getFile(userId: string, fileId: string): Promise<VideoFile> {
+    return await fileService.getFile(userId, fileId);
+  }
 }
