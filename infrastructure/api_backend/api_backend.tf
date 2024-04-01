@@ -375,6 +375,17 @@ resource "aws_dynamodb_table" "main" {
     type = "S"
   }
 
+  attribute {
+    name = "createdAt"
+    type = "N"
+  }
+
+  local_secondary_index {
+    name            = "DateLSI"
+    range_key       = "createdAt"
+    projection_type = "ALL"
+  }
+
   global_secondary_index {
     name            = "TypeGSI"
     hash_key        = "type"

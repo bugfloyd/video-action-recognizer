@@ -53,7 +53,7 @@ const routeHandlers: RouteDefinition = {
       fileController.createFile(parseBody(event)),
   },
   '/files/:userId/:fileId': {
-    GET: (event, pathParams) =>
+    GET: (_event, pathParams) =>
       fileController.getFile(
         getParam(pathParams, 'userId'),
         getParam(pathParams, 'fileId')

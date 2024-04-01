@@ -1,7 +1,6 @@
 import dynamoose from 'dynamoose';
 import { Item } from 'dynamoose/dist/Item';
 
-// Define TypeScript interface for File model
 export interface IFileBase {
   pk: string;
   sk: string;
@@ -60,7 +59,22 @@ const FileSchema = new dynamoose.Schema(
   },
   {
     saveUnknown: false,
-    timestamps: true,
+    timestamps: {
+      createdAt: {
+        createdAt: {
+          type: Number,
+          index: {
+            name: 'DateLSI',
+            type: 'local',
+          },
+        }
+      },
+      updatedAt: {
+        updatedAt: {
+          type: Number
+        }
+      }
+    },
   }
 );
 

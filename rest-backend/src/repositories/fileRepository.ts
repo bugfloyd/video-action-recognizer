@@ -9,11 +9,10 @@ import { QueryResponse } from 'dynamoose/dist/ItemRetriever';
 class FileRepository {
   async createFile(file: CreateVideoFileParams): Promise<VideoFile> {
     const { userId, key, name, description } = file;
-    const data = new Date().toISOString();
     const fileId = uuidv4();
     const createFileObj: IFileBase = {
       pk: `FILE#${userId}`,
-      sk: `${data}#USER#${userId}#FILE#${fileId}`,
+      sk: fileId,
       userId,
       fileId,
       key,
@@ -28,26 +27,10 @@ class FileRepository {
     } catch (e) {
       throw new VarException(fileCases.createFile.FailedToCreateRef, e);
     }
-
     if (!dbFile || !dbFile.fileId) {
       throw new VarException(fileCases.createFile.FailedToCreateRef);
     }
-
     return convertFileDBToVideoFile(dbFile);
-  }
-
-  async getFile(userId: string, fileId: string): Promise<VideoFile> {
-    try {
-      const dbFiles = await FileModel.query('pk')
-        .eq(`FILE#${userId}`)
-        .where('fileId')
-        .eq(fileId)
-        .limit(1)
-        .exec();
-      return convertFileDBToVideoFile(dbFiles[0]);
-    } catch (e) {
-      throw new VarException(fileCases.getFile.FailedToQueryFile, e);
-    }
   }
 
   async getAllFiles(): Promise<VideoFile[]> {
@@ -65,6 +48,20 @@ class FileRepository {
       throw new VarException(fileCases.getFiles.FailedToQueryFiles, e);
     }
   }
+
+  async getFile(userId: string, fileId: string): Promise<VideoFile> {
+    let dbFile: IFile;
+    try {
+      dbFile = await FileModel.get({ pk: `FILE#${userId}`, sk: fileId });
+    } catch (e) {
+      throw new VarException(fileCases.getFile.FailedToQueryFile, e);
+    }
+    if (!dbFile || !dbFile.fileId) {
+      throw new VarException(fileCases.getFile.NotFound);
+    }
+    return convertFileDBToVideoFile(dbFile);
+  }
+
 }
 
 const fileRepository = new FileRepository();

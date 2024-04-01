@@ -1,16 +1,4 @@
 export const fileCases = {
-  getFiles: {
-    FailedToQueryFiles: {
-      code: 500,
-      message: 'Failed to query files.',
-    },
-  },
-  getFile: {
-    FailedToQueryFile: {
-      code: 500,
-      message: 'Failed to query file.',
-    },
-  },
   createFile: {
     createFileMissingParams: {
       code: 400,
@@ -31,6 +19,22 @@ export const fileCases = {
     FailedToCreateRef: {
       code: 500,
       message: 'Failed to create the file reference.',
+    },
+  },
+  getFiles: {
+    FailedToQueryFiles: {
+      code: 500,
+      message: 'Failed to query files.',
+    },
+  },
+  getFile: {
+    FailedToQueryFile: {
+      code: 500,
+      message: 'Failed to query file.',
+    },
+    NotFound: {
+      code: 404,
+      message: 'The requested file not found.',
     },
   },
 } as const;
