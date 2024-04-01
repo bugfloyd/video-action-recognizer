@@ -63,48 +63,43 @@ const routeHandlers: RouteDefinition = {
   },
 };
 
-type PathParams = Record<string, string>;
+type ParamName = 'userId' | 'fileId' | 'resultId';
+type PathParams = {
+  [paramName in ParamName]?: string;
+};
 
 const getParam = (
   pathParams: PathParams,
-  paramName: 'userId' | 'fileId' | 'resultId'
+  paramName: ParamName
 ): string => {
   if (pathParams[paramName]) {
-    return pathParams[paramName];
+    return <string>pathParams[paramName];
   }
   throw new VarException(globalCases.invalidPathParams);
 };
 
-const readPathParams = (event: APIGatewayProxyEvent): PathParams => {
+const readPath = (event: APIGatewayProxyEvent): [string, PathParams] => {
+  const { path} = event;
   const params: PathParams = {};
+  let routeKey = path.replace(/\/+$/, ''); //remove trailing slashes
   if (!event.pathParameters) {
-    return params;
+    return [routeKey, params];
   }
 
-  if (event.pathParameters['user_id']) {
-    params.userId = event.pathParameters['user_id'];
+  const paramNames: ParamName[] = ['userId', 'fileId', 'resultId'];
+  for (const param of paramNames) {
+    const paramValue = event.pathParameters[param];
+    if (paramValue) {
+      params[param] = paramValue;
+      routeKey = routeKey.replace(paramValue, `:${param}`);
+    }
   }
-  if (event.pathParameters['file_id']) {
-    params.fileId = event.pathParameters['file_id'];
-  }
-  if (event.pathParameters['result_id']) {
-    params.resultId = event.pathParameters['result_id'];
-  }
-
-  return params;
+  return [routeKey, params];
 };
 
 export const appRouter: ServiceRouter = async (event: APIGatewayProxyEvent) => {
-  const { httpMethod, path } = event;
-  const pathParams = readPathParams(event);
-  let routeKey = path.replace(/\/+$/, ''); //remove trailing slashes
-
-  for (const paramName in pathParams) {
-    if (pathParams[paramName]) {
-      routeKey = routeKey.replace(pathParams[paramName], `:${paramName}`);
-    }
-  }
-
+  const { httpMethod} = event;
+  const [routeKey, pathParams] = readPath(event);
   const handler = routeHandlers[routeKey]?.[httpMethod as HttpMethod];
   if (!handler) {
     throw new VarException(globalCases.notImplemented);
