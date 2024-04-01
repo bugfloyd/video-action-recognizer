@@ -348,7 +348,10 @@ resource "aws_iam_policy" "lambda_dynamodb_policy" {
           "dynamodb:Query",
         ],
         Effect   = "Allow",
-        Resource = "${aws_dynamodb_table.main.arn}/index/TypeGSI"
+        Resource = [
+          "${aws_dynamodb_table.main.arn}/index/TypeGSI",
+          "${aws_dynamodb_table.main.arn}/index/DateLSI"
+        ]
       }
     ]
   })
@@ -389,7 +392,7 @@ resource "aws_dynamodb_table" "main" {
   global_secondary_index {
     name            = "TypeGSI"
     hash_key        = "type"
-    range_key       = "sk"
+    range_key       = "createdAt"
     projection_type = "ALL"
   }
 }

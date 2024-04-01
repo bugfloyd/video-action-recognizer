@@ -6,7 +6,7 @@ export const fileCases = {
     },
     InvalidUserId: {
       code: 400,
-      message: 'The provided user ID is not valid!',
+      message: 'The provided user ID is not valid or does not exist.',
     },
     InvalidKey: {
       code: 400,
@@ -27,7 +27,21 @@ export const fileCases = {
       message: 'Failed to query files.',
     },
   },
+  getUserFiles: {
+    InvalidUserId: {
+      code: 400,
+      message: 'The provided user ID is not valid or does not exist.',
+    },
+    FailedToQueryFiles: {
+      code: 500,
+      message: 'Failed to query files.',
+    },
+  },
   getFile: {
+    InvalidUserId: {
+      code: 400,
+      message: 'The provided user ID is not valid or does not exist.',
+    },
     FailedToQueryFile: {
       code: 500,
       message: 'Failed to query file.',

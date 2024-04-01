@@ -63,7 +63,17 @@ export class FileService {
     return fileRepository.getAllFiles();
   }
 
+  async getUserFiles(userId: string): Promise<VideoFile[]> {
+    if (!validateUserId(userId)) {
+      throw new VarException(fileCases.getUserFiles.InvalidUserId);
+    }
+    return fileRepository.getUserFiles(userId);
+  }
+
   async getFile(userId: string, fileId: string): Promise<VideoFile> {
+    if (!validateUserId(userId)) {
+      throw new VarException(fileCases.getFile.InvalidUserId);
+    }
     return fileRepository.getFile(userId, fileId);
   }
 
