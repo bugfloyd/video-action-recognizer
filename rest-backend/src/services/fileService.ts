@@ -59,4 +59,8 @@ export class FileService {
   async getFiles(): Promise<VideoFile[]> {
     return fileRepository.getAllFiles();
   }
+
+  async getFile(userId: string, fileId: string): Promise<VideoFile> {
+    return fileRepository.getFile(userId, fileId);
+  }
 }

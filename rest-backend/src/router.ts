@@ -48,14 +48,16 @@ const routeHandlers: RouteDefinition = {
       usersController.deleteUser(getParam(pathParams, 'userId')),
   },
   '/files': {
-    GET: () =>
-      fileController.getFiles(),
+    GET: () => fileController.getFiles(),
     POST: (event: APIGatewayProxyEvent) =>
       fileController.createFile(parseBody(event)),
   },
-  '/files/:fileId': {
-    // GET: (event: APIGatewayProxyEvent) =>
-    //   fileController.getUFile(parseFileId(event)),
+  '/files/:userId/:fileId': {
+    GET: (event, pathParams) =>
+      fileController.getFile(
+        getParam(pathParams, 'userId'),
+        getParam(pathParams, 'fileId')
+      ),
     // PATCH: (event: APIGatewayProxyEvent) =>
     //   fileController.updateFile(parseFileId(event), parseBody(event)),
     // DELETE: (event: APIGatewayProxyEvent) =>
@@ -68,10 +70,7 @@ type PathParams = {
   [paramName in ParamName]?: string;
 };
 
-const getParam = (
-  pathParams: PathParams,
-  paramName: ParamName
-): string => {
+const getParam = (pathParams: PathParams, paramName: ParamName): string => {
   if (pathParams[paramName]) {
     return <string>pathParams[paramName];
   }
@@ -79,7 +78,7 @@ const getParam = (
 };
 
 const readPath = (event: APIGatewayProxyEvent): [string, PathParams] => {
-  const { path} = event;
+  const { path } = event;
   const params: PathParams = {};
   let routeKey = path.replace(/\/+$/, ''); //remove trailing slashes
   if (!event.pathParameters) {
@@ -98,7 +97,7 @@ const readPath = (event: APIGatewayProxyEvent): [string, PathParams] => {
 };
 
 export const appRouter: ServiceRouter = async (event: APIGatewayProxyEvent) => {
-  const { httpMethod} = event;
+  const { httpMethod } = event;
   const [routeKey, pathParams] = readPath(event);
   const handler = routeHandlers[routeKey]?.[httpMethod as HttpMethod];
   if (!handler) {

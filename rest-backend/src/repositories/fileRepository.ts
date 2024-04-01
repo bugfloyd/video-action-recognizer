@@ -4,6 +4,7 @@ import { VarException } from '../exceptions/VarException';
 import { fileCases } from '../exceptions/cases/fileCases';
 import { CreateVideoFileParams, VideoFile } from '../types/videoFile';
 import { convertFileDBToVideoFile } from '../db/entityMappers';
+import { QueryResponse } from 'dynamoose/dist/ItemRetriever';
 
 class FileRepository {
   async createFile(file: CreateVideoFileParams): Promise<VideoFile> {
@@ -35,6 +36,20 @@ class FileRepository {
     return convertFileDBToVideoFile(dbFile);
   }
 
+  async getFile(userId: string, fileId: string): Promise<VideoFile> {
+    try {
+      const dbFiles = await FileModel.query('pk')
+        .eq(`FILE#${userId}`)
+        .where('fileId')
+        .eq(fileId)
+        .limit(1)
+        .exec();
+      return convertFileDBToVideoFile(dbFiles[0]);
+    } catch (e) {
+      throw new VarException(fileCases.getFile.FailedToQueryFile, e);
+    }
+  }
+
   async getAllFiles(): Promise<VideoFile[]> {
     const dbFiles: IFile[] = [];
     try {
@@ -44,7 +59,7 @@ class FileRepository {
         .all() // Fetch all records; be cautious with this in production for large datasets
         .exec();
 
-      dbFiles.push(...results)
+      dbFiles.push(...results);
       return dbFiles.map((dbFile) => convertFileDBToVideoFile(dbFile));
     } catch (e) {
       throw new VarException(fileCases.getFiles.FailedToQueryFiles, e);

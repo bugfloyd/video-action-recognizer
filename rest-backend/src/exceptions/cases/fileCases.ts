@@ -5,6 +5,12 @@ export const fileCases = {
       message: 'Failed to query files.',
     },
   },
+  getFile: {
+    FailedToQueryFile: {
+      code: 500,
+      message: 'Failed to query file.',
+    },
+  },
   createFile: {
     createFileMissingParams: {
       code: 400,
