@@ -4,9 +4,11 @@ import { globalCases } from './exceptions/cases/globalCases';
 import { UserController } from './controllers/userController';
 import { ServiceRouter } from './types/types';
 import { FileController } from './controllers/fileController';
+import { ResultController } from './controllers/resultController';
 
 const usersController = new UserController();
 const fileController = new FileController();
+const resultController = new ResultController();
 
 type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
@@ -75,6 +77,44 @@ const routeHandlers: RouteDefinition = {
       fileController.deleteFile(
         getParam(pathParams, 'userId'),
         getParam(pathParams, 'fileId')
+      ),
+  },
+
+  '/results': {
+    GET: () => resultController.getResults(),
+  },
+  '/results/:userId/:fileId': {
+    POST: (event, pathParams) =>
+      resultController.createResult(
+        getParam(pathParams, 'userId'),
+        getParam(pathParams, 'fileId'),
+        parseBody(event)
+      ),
+    GET: (_event, pathParams) =>
+      resultController.getFileResults(
+        getParam(pathParams, 'userId'),
+        getParam(pathParams, 'fileId')
+      ),
+  },
+  '/results/:userId/:fileId/:resultId': {
+    GET: (_event, pathParams) =>
+      resultController.getResult(
+        getParam(pathParams, 'userId'),
+        getParam(pathParams, 'fileId'),
+        getParam(pathParams, 'resultId')
+      ),
+    PATCH: (event, pathParams) =>
+      resultController.updateResult(
+        getParam(pathParams, 'userId'),
+        getParam(pathParams, 'fileId'),
+        getParam(pathParams, 'resultId'),
+        parseBody(event)
+      ),
+    DELETE: (_event, pathParams) =>
+      resultController.deleteResult(
+        getParam(pathParams, 'userId'),
+        getParam(pathParams, 'fileId'),
+        getParam(pathParams, 'resultId')
       ),
   },
 };

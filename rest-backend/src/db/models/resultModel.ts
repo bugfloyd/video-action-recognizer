@@ -2,21 +2,31 @@ import dynamoose from 'dynamoose';
 import { Item } from 'dynamoose/dist/Item';
 import { EntityTimestamps } from '../../types/types';
 
-export interface IFileBase {
+export interface IResultBase {
   pk: string;
   sk: string;
   userId: string;
   fileId: string;
-  key: string;
-  name: string;
-  description?: string;
+  resultId: string;
+  data: {
+    model: string;
+    output: object;
+  };
   type: string;
 }
 
-export interface IFile extends Item, IFileBase, EntityTimestamps {}
+export interface IResult extends Item, IResultBase, EntityTimestamps {}
+
+// Define a nested schema for your object if needed
+const resultDataSchema = new dynamoose.Schema({
+  model: String,
+  output: Object
+}, {
+  saveUnknown: true,
+});
 
 // File Model
-const FileSchema = new dynamoose.Schema(
+const ResultSchema = new dynamoose.Schema(
   {
     pk: {
       type: String,
@@ -34,18 +44,11 @@ const FileSchema = new dynamoose.Schema(
       type: String,
       required: true,
     },
-    key: {
+    resultId: {
       type: String,
       required: true,
     },
-    name: {
-      type: String,
-      required: true,
-    },
-    description: {
-      type: String,
-      required: false,
-    },
+    data: resultDataSchema,
     type: {
       type: String,
       index: {
@@ -75,7 +78,7 @@ const FileSchema = new dynamoose.Schema(
   }
 );
 
-const FileModel = dynamoose.model<IFile>('VarMain', FileSchema, {
+const ResultModel = dynamoose.model<IResult>('VarMain', ResultSchema, {
   create: false,
 });
-export default FileModel;
+export default ResultModel;

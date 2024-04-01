@@ -5,16 +5,8 @@ import {
   VideoFile,
 } from '../types/videoFile';
 import { fileCases } from '../exceptions/cases/fileCases';
-import { isUUID4 } from '../utils';
+import { validateUserId } from '../utils';
 import fileRepository from '../repositories/fileRepository';
-
-const validateUserId = (userId: string): boolean => {
-  if (!userId || !isUUID4(userId)) {
-    return false;
-  }
-  // ToDo: Check user existence
-  return true;
-};
 
 const validateVideoKey = (key: string): boolean => {
   // ToDo: Check file existence
@@ -31,7 +23,10 @@ const validateName = (name: string): boolean => {
 };
 
 export class FileService {
-  async createFile(userId: string, params: Partial<CreateVideoFileParams>): Promise<VideoFile> {
+  async createFile(
+    userId: string,
+    params: Partial<CreateVideoFileParams>
+  ): Promise<VideoFile> {
     const { key, name, description } = params;
 
     if (!userId || !key || !name) {
@@ -84,7 +79,7 @@ export class FileService {
   ): Promise<VideoFile> {
     const { name } = params;
     if (name && !validateName(name)) {
-      throw new VarException(fileCases.createFile.InvalidName);
+      throw new VarException(fileCases.updateFile.InvalidName);
     }
 
     return await fileRepository.updateFile(userId, fileId, params);

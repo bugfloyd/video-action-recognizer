@@ -52,6 +52,10 @@ export const fileCases = {
     },
   },
   updateFile: {
+    InvalidName: {
+      code: 400,
+      message: 'The provided name is not valid!',
+    },
     FailedToUpdateFile: {
       code: 500,
       message: 'Failed to update the requested file.',

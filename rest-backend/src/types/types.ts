@@ -24,3 +24,8 @@ export interface APIUser {
   created_at?: Date;
   modified_at?: Date;
 }
+
+export interface EntityTimestamps {
+  createdAt: string;
+  updatedAt: string;
+}
