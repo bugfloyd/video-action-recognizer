@@ -31,8 +31,8 @@ const validateName = (name: string): boolean => {
 };
 
 export class FileService {
-  async createFile(params: Partial<CreateVideoFileParams>): Promise<VideoFile> {
-    const { userId, key, name, description } = params;
+  async createFile(userId: string, params: Partial<CreateVideoFileParams>): Promise<VideoFile> {
+    const { key, name, description } = params;
 
     if (!userId || !key || !name) {
       throw new VarException(fileCases.createFile.createFileMissingParams);
@@ -51,13 +51,12 @@ export class FileService {
     }
 
     const createFileParams: CreateVideoFileParams = {
-      userId,
       key,
       name,
       description,
     };
 
-    return await fileRepository.createFile(createFileParams);
+    return await fileRepository.createFile(userId, createFileParams);
   }
 
   async getFiles(): Promise<VideoFile[]> {

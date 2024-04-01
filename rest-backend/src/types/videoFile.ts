@@ -9,7 +9,6 @@ export interface VideoFile {
 }
 
 export interface CreateVideoFileParams {
-  userId: string;
   key: string;
   name: string;
   description?: string;

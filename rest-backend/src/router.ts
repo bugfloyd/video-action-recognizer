@@ -49,8 +49,10 @@ const routeHandlers: RouteDefinition = {
   },
   '/files': {
     GET: () => fileController.getFiles(),
-    POST: (event: APIGatewayProxyEvent) =>
-      fileController.createFile(parseBody(event)),
+  },
+  '/files/:userId': {
+    POST: (event, pathParams) =>
+      fileController.createFile(getParam(pathParams, 'userId'), parseBody(event)),
   },
   '/files/:userId/:fileId': {
     GET: (_event, pathParams) =>

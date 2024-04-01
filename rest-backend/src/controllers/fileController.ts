@@ -4,10 +4,9 @@ import { CreateVideoFileParams, UpdateVideoFileParams, VideoFile } from '../type
 const fileService = new FileService();
 
 export class FileController {
-  async createFile(requestBody: CreateVideoFileParams): Promise<VideoFile> {
+  async createFile(userId: string, requestBody: CreateVideoFileParams): Promise<VideoFile> {
     // Validate and clean up the requestBody
     const validKeys: Array<keyof CreateVideoFileParams> = [
-      'userId',
       'key',
       'name',
       'description',
@@ -18,7 +17,7 @@ export class FileController {
         cleanedRequestBody[key] = requestBody[key];
       }
     }
-    return await fileService.createFile(cleanedRequestBody);
+    return await fileService.createFile(userId, cleanedRequestBody);
   }
 
   async getFiles(): Promise<VideoFile[]> {

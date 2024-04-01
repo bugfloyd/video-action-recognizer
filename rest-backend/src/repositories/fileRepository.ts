@@ -12,8 +12,8 @@ import { QueryResponse } from 'dynamoose/dist/ItemRetriever';
 import dynamoose from 'dynamoose';
 
 class FileRepository {
-  async createFile(file: CreateVideoFileParams): Promise<VideoFile> {
-    const { userId, key, name, description } = file;
+  async createFile(userId: string, file: CreateVideoFileParams): Promise<VideoFile> {
+    const { key, name, description } = file;
     const fileId = uuidv4();
     const createFileObj: IFileBase = {
       pk: `FILE#${userId}`,
