@@ -7,6 +7,7 @@ import {
 import { fileCases } from '../exceptions/cases/fileCases';
 import { validateUserId } from '../utils';
 import fileRepository from '../repositories/fileRepository';
+import { generateSignedUrl } from '../aws/signed-urls';
 
 const validateVideoKey = (key: string): boolean => {
   // ToDo: Check file existence
@@ -88,5 +89,20 @@ export class FileService {
   async deleteFile(userId: string, fileId: string): Promise<'deleted'> {
     await fileRepository.deleteFile(userId, fileId);
     return 'deleted';
+  }
+
+  async generateSignedUrl(
+    userId: string,
+    requestBody: {
+      key: string;
+    }
+  ): Promise<{
+    url: string;
+  }> {
+    const { key } = requestBody;
+    const finalKey = `user_data/${userId}/${key}`;
+    return {
+      url: await generateSignedUrl(finalKey),
+    };
   }
 }

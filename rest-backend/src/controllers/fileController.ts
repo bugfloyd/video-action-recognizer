@@ -1,10 +1,17 @@
 import { FileService } from '../services/fileService';
-import { CreateVideoFileParams, UpdateVideoFileParams, VideoFile } from '../types/videoFile';
+import {
+  CreateVideoFileParams,
+  UpdateVideoFileParams,
+  VideoFile,
+} from '../types/videoFile';
 
 const fileService = new FileService();
 
 export class FileController {
-  async createFile(userId: string, requestBody: CreateVideoFileParams): Promise<VideoFile> {
+  async createFile(
+    userId: string,
+    requestBody: CreateVideoFileParams
+  ): Promise<VideoFile> {
     // Validate and clean up the requestBody
     const validKeys: Array<keyof CreateVideoFileParams> = [
       'key',
@@ -32,11 +39,15 @@ export class FileController {
     return await fileService.getFile(userId, fileId);
   }
 
-  async updateFile(userId: string, fileId: string, requestBody: UpdateVideoFileParams): Promise<VideoFile> {
+  async updateFile(
+    userId: string,
+    fileId: string,
+    requestBody: UpdateVideoFileParams
+  ): Promise<VideoFile> {
     // Validate and clean up the requestBody
     const validKeys: Array<keyof UpdateVideoFileParams> = [
       'name',
-      'description'
+      'description',
     ];
     const cleanedRequestBody: Partial<UpdateVideoFileParams> = {};
     for (const key of validKeys) {
@@ -49,5 +60,16 @@ export class FileController {
 
   async deleteFile(userId: string, fileId: string): Promise<'deleted'> {
     return await fileService.deleteFile(userId, fileId);
+  }
+
+  async generateSignedUrl(
+    userId: string,
+    requestBody: {
+      key: string;
+    }
+  ): Promise<{
+    url: string;
+  }> {
+    return fileService.generateSignedUrl(userId, requestBody);
   }
 }

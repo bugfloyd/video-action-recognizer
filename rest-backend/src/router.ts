@@ -52,6 +52,13 @@ const routeHandlers: RouteDefinition = {
   '/files': {
     GET: () => fileController.getFiles(),
   },
+  '/files/:userId/generate-signed-url': {
+    POST: (event, pathParams) =>
+      fileController.generateSignedUrl(
+        getParam(pathParams, 'userId'),
+        parseBody(event)
+      ),
+  },
   '/files/:userId': {
     POST: (event, pathParams) =>
       fileController.createFile(

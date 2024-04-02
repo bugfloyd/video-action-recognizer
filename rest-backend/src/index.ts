@@ -1,5 +1,10 @@
 import { VarException } from './exceptions/VarException';
-import { userPoolId } from './variables';
+import {
+  cloudfrontDistributionDomain,
+  cloudFrontPrivateKeySecretName,
+  cloudFrontPublicKeyId,
+  userPoolId,
+} from './variables';
 import { awsRegion } from './variables';
 import { globalCases } from './exceptions/cases/globalCases';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
@@ -15,6 +20,21 @@ export const handler = async (
     }
     if (!userPoolId) {
       console.error('ERROR - No USER_POOL_ID environment variable found');
+      throw new VarException(globalCases.badConfig);
+    }
+
+    if (!cloudfrontDistributionDomain) {
+      console.error('ERROR - No CLOUDFRONT_DISTRIBUTION_DOMAIN environment variable found');
+      throw new VarException(globalCases.badConfig);
+    }
+
+    if (!cloudFrontPrivateKeySecretName) {
+      console.error('ERROR - No CLOUDFRONT_PRIVATE_KEY_SECRET_NAME environment variable found');
+      throw new VarException(globalCases.badConfig);
+    }
+
+    if (!cloudFrontPublicKeyId) {
+      console.error('ERROR - No CLOUDFRONT_PUBLIC_KEY_ID environment variable found');
       throw new VarException(globalCases.badConfig);
     }
   };

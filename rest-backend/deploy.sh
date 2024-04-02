@@ -39,7 +39,7 @@ done
 # Check for required parameters
 if [[ -z "$BUCKET_NAME" ]]; then
   echo "Error: Missing required parameters."
-  echo "Usage: $0 --bucket <LAMBDA_BUCKET_NAME> [--profile <name>] [--region <value>]"
+  echo "Usage: $0 --bucket <LAMBDA_BUCKET_NAME> --skip-infra-update <true> [--profile <name>] [--region <value>]"
   exit 1
 fi
 
