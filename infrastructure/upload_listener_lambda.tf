@@ -103,12 +103,12 @@ resource "aws_lambda_permission" "allow_bucket" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.upload_listener_lambda.function_name
   principal     = "s3.amazonaws.com"
-  source_arn    = "arn:aws:s3:::${aws_s3_bucket.input_bucket.id}"
+  source_arn    = "arn:aws:s3:::${aws_s3_bucket.data_bucket.id}"
 }
 
 # Trigger Lambda function on S3 put events for mp4 and gif files
 resource "aws_s3_bucket_notification" "input_bucket_notification" {
-  bucket = aws_s3_bucket.input_bucket.id
+  bucket = aws_s3_bucket.data_bucket.id
 
   lambda_function {
     lambda_function_arn = aws_lambda_function.upload_listener_lambda.arn

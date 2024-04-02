@@ -17,3 +17,18 @@ variable "cognito_domain_prefix" {
   description = "The prefix for the Amazon Cognito domain."
   type        = string
 }
+
+variable "cloudfront_distribution_domain" {
+  description = "CloudFront S3 backed distribution domain"
+  type        = string
+}
+
+variable "cloudfront_public_key_id" {
+  description = "CloudFront public key ID for signing URLs"
+  type        = string
+}
+
+variable "cloudfront_private_key_secret_arn" {
+  description = "CloudFront private key secret ARN for signing URLs"
+  type        = string
+}

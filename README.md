@@ -68,6 +68,12 @@ terraform plan -out init.tfplan
 terraform apply "init.tfplan"
 ```
 
+### Generate CloudFront Key Pair
+Inside the `init` directory of infra directory:
+```shell
+./generate-cloudfront-key.sh [<AWS_PROFILE_NAME>]
+```
+
 ### Listener Lambda
 
 Navigate to the `upload-listener` directory:

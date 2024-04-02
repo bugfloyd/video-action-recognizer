@@ -60,7 +60,7 @@ resource "aws_ecs_task_definition" "analysis_core_task" {
       environment = [
         {
           name  = "INPUT_VIDEO_S3_BUCKET",
-          value = aws_s3_bucket.input_bucket.id
+          value = aws_s3_bucket.data_bucket.id
         },
         {
           name  = "INPUT_VIDEO_S3_KEY",
@@ -69,10 +69,6 @@ resource "aws_ecs_task_definition" "analysis_core_task" {
         {
           name  = "S3_REGION",
           value = var.aws_region
-        },
-        {
-          name  = "OUTPUT_VIDEO_S3_BUCKET",
-          value = aws_s3_bucket.output_bucket.id
         },
       ],
       logConfiguration = {
@@ -130,15 +126,10 @@ resource "aws_iam_policy" "analysis_core_s3_access" {
     Version = "2012-10-17",
     Statement = [
       {
-        Action   = "s3:GetObject",
+        Action   = ["s3:GetObject", "s3:PutObject"],
         Effect   = "Allow",
-        Resource = "arn:aws:s3:::${var.input_bucket}/*"
-      },
-      {
-        Action   = "s3:PutObject",
-        Effect   = "Allow",
-        Resource = "arn:aws:s3:::${var.output_bucket}/*"
-      },
+        Resource = "arn:aws:s3:::${var.data_bucket}/*"
+      }
     ],
   })
 }

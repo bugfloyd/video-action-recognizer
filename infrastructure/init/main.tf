@@ -51,3 +51,23 @@ module "github" {
 output "github_pipeline_execution_role_arn" {
   value = length(module.github) > 0 ? module.github[0].pipeline_execution_role_arn : "No GitHub repo provided"
 }
+
+# Store the CloudFront Key Pair ID in AWS Secrets Manager
+resource "aws_secretsmanager_secret" "cloudfront_key_pair_id" {
+  name        = "cloudfront_signing_key_id"
+  description = "CloudFront Key Pair ID for signed URLs"
+}
+
+# Store the private key in AWS Secrets Manager
+resource "aws_secretsmanager_secret" "cloudfront_private_key" {
+  name        = "cloudfront_signing_private_key"
+  description = "Private Key for CloudFront signed URLs"
+}
+
+output "cloudfront_key_pair_id_arn" {
+  value = aws_secretsmanager_secret.cloudfront_key_pair_id.arn
+}
+
+output "cloudfront_private_key_arn" {
+  value = aws_secretsmanager_secret.cloudfront_private_key.arn
+}

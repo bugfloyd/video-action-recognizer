@@ -11,6 +11,12 @@ resource "aws_api_gateway_resource" "user_files_resource" {
   path_part   = "{userId}"
 }
 
+resource "aws_api_gateway_resource" "generate_signed_url_resource" {
+  rest_api_id = aws_api_gateway_rest_api.var_rest_backend.id
+  parent_id   = aws_api_gateway_resource.user_files_resource.id
+  path_part   = "generate-signed-url"
+}
+
 resource "aws_api_gateway_resource" "file_resource" {
   rest_api_id = aws_api_gateway_rest_api.var_rest_backend.id
   parent_id   = aws_api_gateway_resource.user_files_resource.id
@@ -21,6 +27,14 @@ resource "aws_api_gateway_resource" "file_resource" {
 resource "aws_api_gateway_method" "post_file" {
   rest_api_id   = aws_api_gateway_rest_api.var_rest_backend.id
   resource_id   = aws_api_gateway_resource.user_files_resource.id
+  http_method   = "POST"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+}
+
+resource "aws_api_gateway_method" "generate_signed_url" {
+  rest_api_id   = aws_api_gateway_rest_api.var_rest_backend.id
+  resource_id   = aws_api_gateway_resource.generate_signed_url_resource.id
   http_method   = "POST"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
@@ -89,6 +103,15 @@ resource "aws_api_gateway_integration" "post_file_lambda_integration" {
   rest_api_id             = aws_api_gateway_rest_api.var_rest_backend.id
   resource_id             = aws_api_gateway_resource.user_files_resource.id
   http_method             = aws_api_gateway_method.post_file.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.rest_backend_lambda.invoke_arn
+}
+
+resource "aws_api_gateway_integration" "generate_signed_url_lambda_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.var_rest_backend.id
+  resource_id             = aws_api_gateway_resource.generate_signed_url_resource.id
+  http_method             = aws_api_gateway_method.generate_signed_url.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.rest_backend_lambda.invoke_arn

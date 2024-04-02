@@ -3,13 +3,8 @@ variable "aws_region" {
   type        = string
 }
 
-variable "input_bucket" {
+variable "data_bucket" {
   description = "The AWS S3 bucket for storing input videos"
-  type        = string
-}
-
-variable "output_bucket" {
-  description = "The AWS S3 bucket for storing output videos"
   type        = string
 }
 
@@ -35,18 +30,28 @@ variable "cognito_domain_prefix" {
 
 variable "db_user" {
   description = "Database master user"
-  type = string
-  default = "postgres"
+  type        = string
+  default     = "postgres"
 }
 
 variable "setup_vpn" {
   description = "Should we setup a VPN server?"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "main_domain_zone_id" {
   description = "Route53 HostedZone ID for the main domain"
-  type = string
-  default = ""
+  type        = string
+  default     = ""
+}
+
+variable "cloudfront_key_id_arn" {
+  description = "CloudFront Key Pair ID secret ARN for signed URLs"
+  type        = string
+}
+
+variable "cloudfront_private_key_arn" {
+  description = "CloudFront private key secret ARN for CloudFront signed URLs"
+  type        = string
 }

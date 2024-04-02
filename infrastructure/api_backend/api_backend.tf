@@ -11,8 +11,11 @@ resource "aws_lambda_function" "rest_backend_lambda" {
 
   environment {
     variables = {
-      REGION       = var.aws_region
-      USER_POOL_ID = aws_cognito_user_pool.main.id
+      REGION                             = var.aws_region
+      USER_POOL_ID                       = aws_cognito_user_pool.main.id
+      CLOUDFRONT_DISTRIBUTION_DOMAIN     = var.cloudfront_distribution_domain
+      CLOUDFRONT_PRIVATE_KEY_SECRET_NAME = var.cloudfront_private_key_secret_arn
+      CLOUDFRONT_PUBLIC_KEY_ID           = var.cloudfront_public_key_id
     }
   }
 }
@@ -32,6 +35,10 @@ resource "aws_iam_role" "rest_backend_lambda_exec_role" {
       },
     ],
   })
+}
+
+output "rest_backend_lambda_exec_role_name" {
+  value = aws_iam_role.rest_backend_lambda_exec_role.name
 }
 
 resource "aws_iam_role_policy_attachment" "rest_backend_lambda_cognito_policy_attachment" {
