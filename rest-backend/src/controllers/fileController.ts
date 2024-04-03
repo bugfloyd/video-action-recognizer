@@ -1,6 +1,8 @@
 import { FileService } from '../services/fileService';
 import {
   CreateVideoFileParams,
+  GenerateSignedUrlParams,
+  GenerateSignedUrlResponse,
   UpdateVideoFileParams,
   VideoFile,
 } from '../types/videoFile';
@@ -8,7 +10,7 @@ import {
 const fileService = new FileService();
 
 export class FileController {
-  async createFile(
+  createFile(
     userId: string,
     requestBody: CreateVideoFileParams
   ): Promise<VideoFile> {
@@ -24,22 +26,22 @@ export class FileController {
         cleanedRequestBody[key] = requestBody[key];
       }
     }
-    return await fileService.createFile(userId, cleanedRequestBody);
+    return fileService.createFile(userId, cleanedRequestBody);
   }
 
-  async getFiles(): Promise<VideoFile[]> {
-    return await fileService.getFiles();
+  getFiles(): Promise<VideoFile[]> {
+    return fileService.getFiles();
   }
 
-  async getUserFiles(userId: string): Promise<VideoFile[]> {
-    return await fileService.getUserFiles(userId);
+  getUserFiles(userId: string): Promise<VideoFile[]> {
+    return fileService.getUserFiles(userId);
   }
 
-  async getFile(userId: string, fileId: string): Promise<VideoFile> {
-    return await fileService.getFile(userId, fileId);
+  getFile(userId: string, fileId: string): Promise<VideoFile> {
+    return fileService.getFile(userId, fileId);
   }
 
-  async updateFile(
+  updateFile(
     userId: string,
     fileId: string,
     requestBody: UpdateVideoFileParams
@@ -55,21 +57,24 @@ export class FileController {
         cleanedRequestBody[key] = requestBody[key];
       }
     }
-    return await fileService.updateFile(userId, fileId, cleanedRequestBody);
+    return fileService.updateFile(userId, fileId, cleanedRequestBody);
   }
 
-  async deleteFile(userId: string, fileId: string): Promise<'deleted'> {
-    return await fileService.deleteFile(userId, fileId);
+  deleteFile(userId: string, fileId: string): Promise<'deleted'> {
+    return fileService.deleteFile(userId, fileId);
   }
 
-  async generateSignedUrl(
+  generateUploadSignedUrl(
     userId: string,
-    requestBody: {
-      key: string;
+    requestBody: GenerateSignedUrlParams
+  ): Promise<GenerateSignedUrlResponse> {
+    const validKeys: Array<keyof GenerateSignedUrlParams> = ['key'];
+    const cleanedRequestBody: Partial<GenerateSignedUrlParams> = {};
+    for (const key of validKeys) {
+      if (requestBody && requestBody[key]) {
+        cleanedRequestBody[key] = requestBody[key];
+      }
     }
-  ): Promise<{
-    url: string;
-  }> {
-    return fileService.generateSignedUrl(userId, requestBody);
+    return fileService.generateSignedUrl(userId, cleanedRequestBody);
   }
 }

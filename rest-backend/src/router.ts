@@ -54,7 +54,7 @@ const routeHandlers: RouteDefinition = {
   },
   '/files/:userId/generate-signed-url': {
     POST: (event, pathParams) =>
-      fileController.generateSignedUrl(
+      fileController.generateUploadSignedUrl(
         getParam(pathParams, 'userId'),
         parseBody(event)
       ),

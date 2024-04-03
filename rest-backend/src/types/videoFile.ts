@@ -18,3 +18,12 @@ export interface UpdateVideoFileParams {
   name?: string;
   description?: string;
 }
+
+export interface GenerateSignedUrlParams {
+  key: string;
+}
+
+export interface GenerateSignedUrlResponse {
+  url: string;
+  expiration: number;
+}

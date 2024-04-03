@@ -1,11 +1,11 @@
 import { VarException } from '../exceptions/VarException';
 import {
-  CreateVideoFileParams,
+  CreateVideoFileParams, GenerateSignedUrlParams, GenerateSignedUrlResponse,
   UpdateVideoFileParams,
   VideoFile,
 } from '../types/videoFile';
 import { fileCases } from '../exceptions/cases/fileCases';
-import { validateUserId } from '../utils';
+import { isValidS3ObjectName, validateUserId } from '../utils';
 import fileRepository from '../repositories/fileRepository';
 import { generateSignedUrl } from '../aws/signed-urls';
 
@@ -91,18 +91,16 @@ export class FileService {
     return 'deleted';
   }
 
-  async generateSignedUrl(
+  generateSignedUrl(
     userId: string,
-    requestBody: {
-      key: string;
-    }
-  ): Promise<{
-    url: string;
-  }> {
+    requestBody: Partial<GenerateSignedUrlParams>
+  ): Promise<GenerateSignedUrlResponse> {
     const { key } = requestBody;
-    const finalKey = `user_data/${userId}/${key}`;
-    return {
-      url: await generateSignedUrl(finalKey),
-    };
+    if (!key || !isValidS3ObjectName(key)) {
+      throw new VarException(fileCases.generateSignedUrl.InvalidKey);
+    }
+    const sanitizedKey = key.replace(' ', '_');
+    const finalKey = `user_data/${userId}/uploads/${sanitizedKey}`;
+    return generateSignedUrl(finalKey);
   }
 }
