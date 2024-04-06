@@ -128,7 +128,7 @@ resource "aws_iam_policy" "analysis_core_s3_access" {
       {
         Action   = ["s3:GetObject", "s3:PutObject"],
         Effect   = "Allow",
-        Resource = "arn:aws:s3:::${var.data_bucket}/*"
+        Resource = "arn:aws:s3:::${var.input_bucket}/*"
       }
     ],
   })

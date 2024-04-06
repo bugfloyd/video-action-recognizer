@@ -30,22 +30,42 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   price_class = "PriceClass_All"
 
   origin {
+    domain_name = aws_s3_bucket.input_bucket.bucket_domain_name
+    origin_id   = "S3-${aws_s3_bucket.input_bucket.id}"
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.s3_input_oai.cloudfront_access_identity_path
+    }
+  }
+
+  origin {
     domain_name = aws_s3_bucket.data_bucket.bucket_domain_name
     origin_id   = "S3-${aws_s3_bucket.data_bucket.id}"
 
     s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.s3_oai.cloudfront_access_identity_path
+      origin_access_identity = aws_cloudfront_origin_access_identity.s3_data_oai.cloudfront_access_identity_path
     }
   }
 
   default_cache_behavior {
-    allowed_methods  = ["GET", "HEAD", "PUT", "POST", "PATCH", "OPTIONS", "DELETE"]
+    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "S3-${aws_s3_bucket.data_bucket.id}"
     trusted_key_groups = [aws_cloudfront_key_group.main_key_group.id]
     cache_policy_id = aws_cloudfront_cache_policy.user_data.id
     origin_request_policy_id = aws_cloudfront_origin_request_policy.user_data.id
     viewer_protocol_policy = "redirect-to-https"
+  }
+
+  ordered_cache_behavior {
+    allowed_methods  = ["GET", "HEAD", "PUT", "POST", "PATCH", "OPTIONS", "DELETE"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = "S3-${aws_s3_bucket.input_bucket.id}"
+    trusted_key_groups = [aws_cloudfront_key_group.main_key_group.id]
+    cache_policy_id = aws_cloudfront_cache_policy.user_data.id
+    origin_request_policy_id = aws_cloudfront_origin_request_policy.user_data.id
+    viewer_protocol_policy = "redirect-to-https"
+    path_pattern = "/upload/*"
   }
 
   restrictions {
@@ -80,7 +100,7 @@ resource "aws_cloudfront_cache_policy" "user_data" {
 }
 
 resource "aws_cloudfront_origin_request_policy" "user_data" {
-  name    = "no-pass-user-date"
+  name    = "no-pass-user-data"
   cookies_config {
     cookie_behavior = "none"
   }
@@ -96,8 +116,12 @@ output "cloudfront_domain_name" {
   value = aws_cloudfront_distribution.s3_distribution.domain_name
 }
 
-resource "aws_cloudfront_origin_access_identity" "s3_oai" {
-  comment = "OAI for S3 bucket access"
+resource "aws_cloudfront_origin_access_identity" "s3_input_oai" {
+  comment = "OAI for S3 input bucket access"
+}
+
+resource "aws_cloudfront_origin_access_identity" "s3_data_oai" {
+  comment = "OAI for S3 data bucket access"
 }
 
 data "aws_secretsmanager_secret" "cloudfront_key_id" {

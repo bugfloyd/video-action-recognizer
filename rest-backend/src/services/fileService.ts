@@ -100,7 +100,7 @@ export class FileService {
       throw new VarException(fileCases.generateSignedUrl.InvalidKey);
     }
     const sanitizedKey = key.replace(' ', '_');
-    const finalKey = `user_data/${userId}/uploads/${sanitizedKey}`;
+    const finalKey = `upload/${userId}/${sanitizedKey}`;
     return generateSignedUrl(finalKey);
   }
 }

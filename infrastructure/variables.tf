@@ -3,6 +3,11 @@ variable "aws_region" {
   type        = string
 }
 
+variable "input_bucket" {
+  description = "The AWS S3 bucket for upload process"
+  type        = string
+}
+
 variable "data_bucket" {
   description = "The AWS S3 bucket for storing input videos"
   type        = string
