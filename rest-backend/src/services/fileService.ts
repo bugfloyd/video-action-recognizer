@@ -1,7 +1,7 @@
 import { VarException } from '../exceptions/VarException';
 import {
-  CreateVideoFileParams, GenerateSignedUrlParams, GenerateSignedUrlResponse,
-  UpdateVideoFileParams,
+  CreateVideoFileRequest, GenerateUploadSignedUrlRequest, GenerateUploadSignedUrlResponse,
+  UpdateVideoFileRequest,
   VideoFile,
 } from '../types/videoFile';
 import { fileCases } from '../exceptions/cases/fileCases';
@@ -26,7 +26,7 @@ const validateName = (name: string): boolean => {
 export class FileService {
   async createFile(
     userId: string,
-    params: Partial<CreateVideoFileParams>
+    params: Partial<CreateVideoFileRequest>
   ): Promise<VideoFile> {
     const { key, name, description } = params;
 
@@ -46,7 +46,7 @@ export class FileService {
       throw new VarException(fileCases.createFile.InvalidName);
     }
 
-    const createFileParams: CreateVideoFileParams = {
+    const createFileParams: CreateVideoFileRequest = {
       key,
       name,
       description,
@@ -76,7 +76,7 @@ export class FileService {
   async updateFile(
     userId: string,
     fileId: string,
-    params: Partial<UpdateVideoFileParams>
+    params: Partial<UpdateVideoFileRequest>
   ): Promise<VideoFile> {
     const { name } = params;
     if (name && !validateName(name)) {
@@ -93,8 +93,8 @@ export class FileService {
 
   generateSignedUrl(
     userId: string,
-    requestBody: Partial<GenerateSignedUrlParams>
-  ): Promise<GenerateSignedUrlResponse> {
+    requestBody: Partial<GenerateUploadSignedUrlRequest>
+  ): Promise<GenerateUploadSignedUrlResponse> {
     const { key } = requestBody;
     if (!key || !isValidS3ObjectName(key)) {
       throw new VarException(fileCases.generateSignedUrl.InvalidKey);

@@ -1,8 +1,8 @@
 import { VarException } from '../exceptions/VarException';
 import {
-  CreateResultParams,
+  CreateResultRequest,
   ResultAPI,
-  UpdateResultParams,
+  UpdateResultRequest,
 } from '../types/result';
 import { resultCases } from '../exceptions/cases/resultCases';
 import resultRepository from '../repositories/resultRepository';
@@ -12,7 +12,7 @@ export class ResultService {
   async createResult(
     userId: string,
     fileId: string,
-    params: Partial<CreateResultParams>
+    params: Partial<CreateResultRequest>
   ): Promise<ResultAPI> {
     const { data } = params;
 
@@ -22,7 +22,7 @@ export class ResultService {
       );
     }
 
-    const createResultParams: CreateResultParams = {
+    const createResultParams: CreateResultRequest = {
       data,
     };
 
@@ -59,7 +59,7 @@ export class ResultService {
     userId: string,
     fileId: string,
     resultId: string,
-    params: Partial<UpdateResultParams>
+    params: Partial<UpdateResultRequest>
   ): Promise<ResultAPI> {
     const { data } = params;
     if ((data && !data.model) || !data?.output) {

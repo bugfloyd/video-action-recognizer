@@ -3,8 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { VarException } from '../exceptions/VarException';
 import { fileCases } from '../exceptions/cases/fileCases';
 import {
-  CreateVideoFileParams,
-  UpdateVideoFileParams,
+  CreateVideoFileRequest,
+  UpdateVideoFileRequest,
   VideoFile,
 } from '../types/videoFile';
 import { convertFileDBToVideoFile } from '../db/entityMappers';
@@ -12,7 +12,7 @@ import { QueryResponse } from 'dynamoose/dist/ItemRetriever';
 import dynamoose from 'dynamoose';
 
 class FileRepository {
-  async createFile(userId: string, file: CreateVideoFileParams): Promise<VideoFile> {
+  async createFile(userId: string, file: CreateVideoFileRequest): Promise<VideoFile> {
     const { key, name, description } = file;
     const fileId = uuidv4();
     const createFileObj: IFileBase = {
@@ -88,7 +88,7 @@ class FileRepository {
   async updateFile(
     userId: string,
     fileId: string,
-    updates: UpdateVideoFileParams
+    updates: UpdateVideoFileRequest
   ): Promise<VideoFile> {
     let updatedFile: IFile;
     try {

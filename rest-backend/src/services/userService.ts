@@ -5,7 +5,7 @@ import {
   UserType,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { AWSCognito } from '../aws/cognito';
-import { APIUser, CreateUserParams, UpdateUserParams } from '../types/types';
+import { APIUser, CreateUserRequest, UpdateUserRequest } from '../types/user';
 import { globalCases } from '../exceptions/cases/globalCases';
 import { UserException } from '../exceptions/VarException';
 import { userCases } from '../exceptions/cases/userCases';
@@ -20,7 +20,7 @@ function validateEmail(email: string): boolean {
 }
 
 export class UserService {
-  async registerUser(params: Partial<CreateUserParams>): Promise<APIUser> {
+  async registerUser(params: Partial<CreateUserRequest>): Promise<APIUser> {
     const { email, given_name, family_name } = params;
 
     if (!email || !given_name) {
@@ -128,7 +128,7 @@ export class UserService {
     };
   }
 
-  async updateUser(username: string, params: Partial<UpdateUserParams>): Promise<APIUser> {
+  async updateUser(username: string, params: Partial<UpdateUserRequest>): Promise<APIUser> {
     const { given_name, family_name, email } = params;
 
     if (!username || !isUUID4(username)) {

@@ -4,9 +4,9 @@ import { convertResultDBToAPI } from '../db/entityMappers';
 import { QueryResponse } from 'dynamoose/dist/ItemRetriever';
 import dynamoose from 'dynamoose';
 import {
-  CreateResultParams,
+  CreateResultRequest,
   ResultAPI,
-  UpdateResultParams,
+  UpdateResultRequest,
 } from '../types/result';
 import ResultModel, { IResult, IResultBase } from '../db/models/resultModel';
 import { resultCases } from '../exceptions/cases/resultCases';
@@ -15,7 +15,7 @@ class ResultRepository {
   async createResult(
     userId: string,
     fileId: string,
-    result: CreateResultParams
+    result: CreateResultRequest
   ): Promise<ResultAPI> {
     const { data } = result;
     const resultId = uuidv4();
@@ -101,7 +101,7 @@ class ResultRepository {
     userId: string,
     fileId: string,
     resultId: string,
-    updates: UpdateResultParams
+    updates: UpdateResultRequest
   ): Promise<ResultAPI> {
     let updatedResult: IResult;
     try {

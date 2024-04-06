@@ -9,7 +9,7 @@ import {
   AdminDeleteUserCommand,
   AdminDeleteUserCommandOutput, AdminUpdateUserAttributesCommandOutput, AdminUpdateUserAttributesCommand, AttributeType,
 } from '@aws-sdk/client-cognito-identity-provider';
-import { CreateUserParams, UpdateUserParams } from '../types/types';
+import { CreateUserRequest, UpdateUserRequest } from '../types/user';
 import { awsRegion, userPoolId } from '../variables';
 
 export class AWSCognito {
@@ -26,7 +26,7 @@ export class AWSCognito {
   }
 
   async createUser(
-    params: CreateUserParams
+    params: CreateUserRequest
   ): Promise<AdminCreateUserCommandOutput> {
     const { given_name, family_name, email } = params;
 
@@ -64,7 +64,7 @@ export class AWSCognito {
 
   async updateUser(
     username: string,
-    params: UpdateUserParams
+    params: UpdateUserRequest
   ): Promise<AdminUpdateUserAttributesCommandOutput> {
     const { given_name, family_name, email } = params;
     const attributes: AttributeType[] = [];

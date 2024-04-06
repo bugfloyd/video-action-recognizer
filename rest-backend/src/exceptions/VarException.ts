@@ -1,4 +1,4 @@
-export interface ErrorCase {
+interface ErrorCase {
   code: number;
   message: string;
 }

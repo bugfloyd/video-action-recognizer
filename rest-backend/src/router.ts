@@ -1,14 +1,23 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
 import { VarException } from './exceptions/VarException';
 import { globalCases } from './exceptions/cases/globalCases';
-import { UserController } from './controllers/userController';
 import { ServiceRouter } from './types/types';
-import { FileController } from './controllers/fileController';
-import { ResultController } from './controllers/resultController';
+import {
+  CreateUserRequest,
+} from './types/user';
+import { UserService } from './services/userService';
+import { FileService } from './services/fileService';
+import { ResultService } from './services/resultService';
+import {
+  createFileRequestProps, createResultRequestProps,
+  createUserProps,
+  generateUploadSignedUrlRequestParams, updateFileRequestProps, updateResultRequestProps,
+  updateUserProps,
+} from './allowedBodyParamas';
 
-const usersController = new UserController();
-const fileController = new FileController();
-const resultController = new ResultController();
+const usersService = new UserService();
+const fileService = new FileService();
+const resultService = new ResultService();
 
 type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
@@ -23,9 +32,19 @@ interface RouteDefinition {
   };
 }
 
-const parseBody = (event: APIGatewayProxyEvent) => {
+const parseBody = <T>(
+  event: APIGatewayProxyEvent,
+  allowedKeys: Array<keyof Partial<T>>
+): Partial<T> => {
   try {
-    return event.body ? JSON.parse(event.body) : {};
+    const requestBody: Partial<T> = event.body ? JSON.parse(event.body) : {};
+    const cleanedRequestBody: Partial<T> = {};
+    for (const key of allowedKeys) {
+      if (requestBody && requestBody[key] !== undefined) {
+        cleanedRequestBody[key] = requestBody[key];
+      }
+    }
+    return cleanedRequestBody;
   } catch (error) {
     console.error(error);
     throw new VarException(globalCases.invalidBodyJson);
@@ -34,91 +53,93 @@ const parseBody = (event: APIGatewayProxyEvent) => {
 
 const routeHandlers: RouteDefinition = {
   '/users': {
-    GET: () => usersController.getUsers(),
+    GET: () => usersService.getUsers(),
     POST: (event: APIGatewayProxyEvent) =>
-      usersController.createUser(parseBody(event)),
+      usersService.registerUser(
+        parseBody<CreateUserRequest>(event, createUserProps)
+      ),
   },
   '/users/:userId': {
     GET: (_event, pathParams) =>
-      usersController.getUser(getParam(pathParams, 'userId')),
+      usersService.getUser(getParam(pathParams, 'userId')),
     PATCH: (event, pathParams) =>
-      usersController.updateUser(
+      usersService.updateUser(
         getParam(pathParams, 'userId'),
-        parseBody(event)
+        parseBody(event, updateUserProps)
       ),
     DELETE: (_event, pathParams) =>
-      usersController.deleteUser(getParam(pathParams, 'userId')),
+      usersService.deleteUser(getParam(pathParams, 'userId')),
   },
   '/files': {
-    GET: () => fileController.getFiles(),
+    GET: () => fileService.getFiles(),
   },
   '/files/:userId/generate-signed-url': {
     POST: (event, pathParams) =>
-      fileController.generateUploadSignedUrl(
+      fileService.generateSignedUrl(
         getParam(pathParams, 'userId'),
-        parseBody(event)
+        parseBody(event, generateUploadSignedUrlRequestParams)
       ),
   },
   '/files/:userId': {
     POST: (event, pathParams) =>
-      fileController.createFile(
+      fileService.createFile(
         getParam(pathParams, 'userId'),
-        parseBody(event)
+        parseBody(event, createFileRequestProps)
       ),
     GET: (_event, pathParams) =>
-      fileController.getUserFiles(getParam(pathParams, 'userId')),
+      fileService.getUserFiles(getParam(pathParams, 'userId')),
   },
   '/files/:userId/:fileId': {
     GET: (_event, pathParams) =>
-      fileController.getFile(
+      fileService.getFile(
         getParam(pathParams, 'userId'),
         getParam(pathParams, 'fileId')
       ),
     PATCH: (event, pathParams) =>
-      fileController.updateFile(
+      fileService.updateFile(
         getParam(pathParams, 'userId'),
         getParam(pathParams, 'fileId'),
-        parseBody(event)
+        parseBody(event, updateFileRequestProps)
       ),
     DELETE: (_event, pathParams) =>
-      fileController.deleteFile(
+      fileService.deleteFile(
         getParam(pathParams, 'userId'),
         getParam(pathParams, 'fileId')
       ),
   },
 
   '/results': {
-    GET: () => resultController.getResults(),
+    GET: () => resultService.getResults(),
   },
   '/results/:userId/:fileId': {
     POST: (event, pathParams) =>
-      resultController.createResult(
+      resultService.createResult(
         getParam(pathParams, 'userId'),
         getParam(pathParams, 'fileId'),
-        parseBody(event)
+        parseBody(event, createResultRequestProps)
       ),
     GET: (_event, pathParams) =>
-      resultController.getFileResults(
+      resultService.getFileResults(
         getParam(pathParams, 'userId'),
         getParam(pathParams, 'fileId')
       ),
   },
   '/results/:userId/:fileId/:resultId': {
     GET: (_event, pathParams) =>
-      resultController.getResult(
+      resultService.getResult(
         getParam(pathParams, 'userId'),
         getParam(pathParams, 'fileId'),
         getParam(pathParams, 'resultId')
       ),
     PATCH: (event, pathParams) =>
-      resultController.updateResult(
+      resultService.updateResult(
         getParam(pathParams, 'userId'),
         getParam(pathParams, 'fileId'),
         getParam(pathParams, 'resultId'),
-        parseBody(event)
+        parseBody(event, updateResultRequestProps)
       ),
     DELETE: (_event, pathParams) =>
-      resultController.deleteResult(
+      resultService.deleteResult(
         getParam(pathParams, 'userId'),
         getParam(pathParams, 'fileId'),
         getParam(pathParams, 'resultId')

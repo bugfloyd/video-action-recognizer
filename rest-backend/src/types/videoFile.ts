@@ -8,22 +8,22 @@ export interface VideoFile {
   updatedAt: string;
 }
 
-export interface CreateVideoFileParams {
+export interface CreateVideoFileRequest {
   key: string;
   name: string;
   description?: string;
 }
 
-export interface UpdateVideoFileParams {
+export interface UpdateVideoFileRequest {
   name?: string;
   description?: string;
 }
 
-export interface GenerateSignedUrlParams {
+export interface GenerateUploadSignedUrlRequest {
   key: string;
 }
 
-export interface GenerateSignedUrlResponse {
+export interface GenerateUploadSignedUrlResponse {
   url: string;
   expiration: number;
 }

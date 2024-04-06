@@ -10,14 +10,14 @@ export interface ResultAPI {
   updatedAt: string;
 }
 
-export interface CreateResultParams {
+export interface CreateResultRequest {
   data: {
     model: string;
     output: object;
   };
 }
 
-export interface UpdateResultParams {
+export interface UpdateResultRequest {
   data?: {
     model: string;
     output: object;

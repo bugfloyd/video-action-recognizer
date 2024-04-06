@@ -9,7 +9,7 @@ import {
   cloudFrontPrivateKeySecretName,
   cloudFrontPublicKeyId,
 } from '../variables';
-import { GenerateSignedUrlResponse } from '../types/videoFile';
+import { GenerateUploadSignedUrlResponse } from '../types/videoFile';
 import { VarException } from '../exceptions/VarException';
 import { fileCases } from '../exceptions/cases/fileCases';
 
@@ -30,7 +30,7 @@ async function getSecretValue(secretName: string): Promise<string> {
 // Generate the signed URL
 export const generateSignedUrl = async (
   s3Key: string
-): Promise<GenerateSignedUrlResponse> => {
+): Promise<GenerateUploadSignedUrlResponse> => {
   try {
     // Fetch the private key and key pair ID from AWS Secrets Manager
     const privateKey = await getSecretValue(cloudFrontPrivateKeySecretName);
