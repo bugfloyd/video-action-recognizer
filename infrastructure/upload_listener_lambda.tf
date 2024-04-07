@@ -1,5 +1,5 @@
 resource "aws_lambda_function" "upload_listener_lambda" {
-  function_name = "analysis_core_task_trigger"
+  function_name = "UploadListener"
   handler       = "listener_lambda.lambda_handler"
   role          = aws_iam_role.upload_listener_lambda_exec_role.arn
   runtime       = "python3.9"
@@ -17,6 +17,7 @@ resource "aws_lambda_function" "upload_listener_lambda" {
       ANALYSIS_CORE_SUBNET_ID_2         = aws_subnet.private_subnet_az2.id
       ANALYSIS_CORE_SECURITY_GROUP      = aws_security_group.analysis_core_sg.id
       ANALYSIS_CORE_CONTAINER_NAME      = local.analysis_core_container_name
+      DESTINATION_BUCKET_NAME           = aws_s3_bucket.data_bucket.id
     }
   }
 }
@@ -57,70 +58,77 @@ resource "aws_iam_policy" "listener_lambda_logging_policy" {
   })
 }
 
-resource "aws_iam_policy" "lambda_run_ecs_task_policy" {
-  name = "lambda_run_ecs_task_policy"
+resource "aws_iam_policy" "listener_lambda_s3_policy" {
+  name = "listener_lambda_s3_policy"
   policy = jsonencode({
     Version : "2012-10-17",
     Statement : [
       {
-        Sid : "IAMPassRolePolicy"
-        Effect : "Allow",
-        Action : [
-          "iam:PassRole",
+        "Effect": "Allow",
+        "Action": [
+          "s3:HeadObject",
+          "s3:GetObject",
+          "s3:GetObjectTagging",
+          "s3:PutObject",
+          "s3:PutObjectAcl",
+          "s3:PutObjectTagging",
+          "s3:DeleteObject"
         ],
-        Resource : [
-          aws_iam_role.ecs_execution_role.arn,
-          aws_iam_role.analysis_core_ecs_task_role.arn
+        "Resource": [
+          "${aws_s3_bucket.input_bucket.arn}/*",
+          "${aws_s3_bucket.data_bucket.arn}/*"
         ]
       },
       {
-        Sid : "EcsRunAnalysisCoreTaskPolicy"
-        Effect : "Allow",
-        Action : [
-          "ecs:RunTask",
+        "Effect": "Allow",
+        "Action": [
+          "s3:ListBucket"
         ],
-        Resource : [
-          aws_ecs_task_definition.analysis_core_task.arn,
-          aws_ecs_cluster.analysis_core_cluster.arn
+        "Resource": [
+          aws_s3_bucket.input_bucket.arn,
+          aws_s3_bucket.data_bucket.arn,
         ]
-      },
+      }
     ]
   })
 }
+
 resource "aws_iam_role_policy_attachment" "lambda_logs_attachment" {
   role       = aws_iam_role.upload_listener_lambda_exec_role.name
   policy_arn = aws_iam_policy.listener_lambda_logging_policy.arn
 }
-resource "aws_iam_role_policy_attachment" "lambda_ecs_task_run_attachment" {
+resource "aws_iam_role_policy_attachment" "listener_lambda_s3_copy" {
   role       = aws_iam_role.upload_listener_lambda_exec_role.name
-  policy_arn = aws_iam_policy.lambda_run_ecs_task_policy.arn
+  policy_arn = aws_iam_policy.listener_lambda_s3_policy.arn
 }
 
-
-# Lambda function permissions to be triggered by S3
-resource "aws_lambda_permission" "allow_bucket" {
-  statement_id  = "AllowExecutionFromS3Bucket"
+resource "aws_lambda_permission" "upload_listener_allow_event_bridge" {
+  statement_id  = "AllowExecutionFromEventBridge"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.upload_listener_lambda.function_name
-  principal     = "s3.amazonaws.com"
-  source_arn    = "arn:aws:s3:::${aws_s3_bucket.data_bucket.id}"
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.s3_event_rule.arn
 }
 
-# Trigger Lambda function on S3 put events for mp4 and gif files
-resource "aws_s3_bucket_notification" "input_bucket_notification" {
-  bucket = aws_s3_bucket.data_bucket.id
+resource "aws_cloudwatch_event_rule" "s3_event_rule" {
+  name = "FileUploaded"
+  event_pattern = jsonencode({
+    "source" : ["aws.s3"],
+    "detail-type" : ["Object Created"],
+    "detail" : {
+      "bucket" : {
+        "name" : [aws_s3_bucket.input_bucket.bucket]
+      }
+      "object" : {
+        "key" : [{
+          "prefix" : "upload/"
+        }]
+      }
+    }
+  })
+}
 
-  lambda_function {
-    lambda_function_arn = aws_lambda_function.upload_listener_lambda.arn
-    events              = ["s3:ObjectCreated:*"]
-    filter_prefix       = ""
-    filter_suffix       = ".mp4"
-  }
-
-  lambda_function {
-    lambda_function_arn = aws_lambda_function.upload_listener_lambda.arn
-    events              = ["s3:ObjectCreated:*"]
-    filter_prefix       = ""
-    filter_suffix       = ".gif"
-  }
+resource "aws_cloudwatch_event_target" "PreProcessUploadedFileLambda" {
+  rule = aws_cloudwatch_event_rule.s3_event_rule.name
+  arn  = aws_lambda_function.upload_listener_lambda.arn
 }

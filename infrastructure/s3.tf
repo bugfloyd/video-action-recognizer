@@ -2,6 +2,11 @@ resource "aws_s3_bucket" "input_bucket" {
   bucket = var.input_bucket
 }
 
+resource "aws_s3_bucket_notification" "input_bucket_notifications" {
+  bucket      = aws_s3_bucket.input_bucket.bucket
+  eventbridge = true
+}
+
 resource "aws_s3_bucket" "data_bucket" {
   bucket = var.data_bucket
 }
