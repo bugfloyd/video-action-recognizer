@@ -216,6 +216,7 @@ resource "aws_cloudwatch_event_target" "AnalyzeVideoECSTask" {
     network_configuration {
       subnets          = [aws_subnet.private_subnet_az1.id, aws_subnet.private_subnet_az2.id]
       assign_public_ip = false
+      security_groups = [aws_security_group.analysis_core_sg.id]
     }
   }
 
