@@ -60,7 +60,7 @@ resource "aws_ecs_task_definition" "analysis_core_task" {
       environment = [
         {
           name  = "INPUT_VIDEO_S3_BUCKET",
-          value = aws_s3_bucket.data_bucket.id
+          value = aws_s3_bucket.data_bucket.bucket
         },
         {
           name  = "INPUT_VIDEO_S3_KEY",
@@ -128,7 +128,7 @@ resource "aws_iam_policy" "analysis_core_s3_access" {
       {
         Action   = ["s3:GetObject", "s3:PutObject"],
         Effect   = "Allow",
-        Resource = "arn:aws:s3:::${var.input_bucket}/*"
+        Resource = "arn:aws:s3:::${aws_s3_bucket.data_bucket.bucket}/*"
       }
     ],
   })

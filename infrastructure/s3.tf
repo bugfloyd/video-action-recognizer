@@ -11,6 +11,11 @@ resource "aws_s3_bucket" "data_bucket" {
   bucket = var.data_bucket
 }
 
+resource "aws_s3_bucket_notification" "data_bucket_notifications" {
+  bucket      = aws_s3_bucket.data_bucket.bucket
+  eventbridge = true
+}
+
 resource "aws_s3_bucket_policy" "input_bucket_policy" {
   bucket = aws_s3_bucket.input_bucket.id
 
