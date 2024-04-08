@@ -18,6 +18,7 @@
     },
     "dependencies": {
         "@aws-sdk/client-cognito-identity-provider": "^3.470.0",
+        "@aws-sdk/client-eventbridge": "^3.549.0",
         "@aws-sdk/client-secrets-manager": "^3.543.0",
         "@aws-sdk/cloudfront-signer": "^3.541.0",
         "dynamoose": "^4.0.0",

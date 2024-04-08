@@ -4,6 +4,10 @@ export const resultCases = {
       code: 400,
       message: 'Model and output are required.',
     },
+    FileNotFound: {
+      code: 404,
+      message: 'File not found.',
+    },
     InvalidUserId: {
       code: 400,
       message: 'The provided user ID is not valid or does not exist.',

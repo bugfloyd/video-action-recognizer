@@ -1,6 +1,8 @@
 import { VarException } from '../exceptions/VarException';
 import {
-  CreateVideoFileRequest, GenerateUploadSignedUrlRequest, GenerateUploadSignedUrlResponse,
+  CreateVideoFileRequest,
+  GenerateUploadSignedUrlRequest,
+  GenerateUploadSignedUrlResponse,
   UpdateVideoFileRequest,
   VideoFile,
 } from '../types/videoFile';
@@ -8,6 +10,8 @@ import { fileCases } from '../exceptions/cases/fileCases';
 import { isValidS3ObjectName, validateUserId } from '../utils';
 import fileRepository from '../repositories/fileRepository';
 import { generateSignedUrl } from '../aws/signed-urls';
+import { putEvent } from '../aws/events';
+import { eventTypes } from '../events';
 
 const validateVideoKey = (key: string): boolean => {
   // ToDo: Check file existence
@@ -52,7 +56,18 @@ export class FileService {
       description,
     };
 
-    return await fileRepository.createFile(userId, createFileParams);
+    const createdFile = await fileRepository.createFile(
+      userId,
+      createFileParams
+    );
+    const putEventResponse = await putEvent(eventTypes.FILE_REF_CREATED, {
+      file: createdFile
+    });
+    console.log(
+      `Event created: ${eventTypes.FILE_REF_CREATED}`,
+      putEventResponse
+    );
+    return createdFile;
   }
 
   async getFiles(): Promise<VideoFile[]> {

@@ -16,8 +16,17 @@ resource "aws_lambda_function" "rest_backend_lambda" {
       CLOUDFRONT_DISTRIBUTION_DOMAIN     = var.cloudfront_distribution_domain
       CLOUDFRONT_PRIVATE_KEY_SECRET_NAME = var.cloudfront_private_key_secret_arn
       CLOUDFRONT_PUBLIC_KEY_ID           = var.cloudfront_public_key_id
+      EVENT_BUS_NAME                     = var.event_bus_name
     }
   }
+}
+
+output "rest_backend_lambda_arn" {
+  value = aws_lambda_function.rest_backend_lambda.arn
+}
+
+output "rest_backend_lambda_name" {
+  value = aws_lambda_function.rest_backend_lambda.function_name
 }
 
 resource "aws_iam_role" "rest_backend_lambda_exec_role" {
@@ -51,19 +60,23 @@ resource "aws_iam_role_policy_attachment" "rest_backends_lambda_logs_attachment"
   policy_arn = aws_iam_policy.backend_lambda_logging_policy.arn
 }
 
-resource "aws_lambda_permission" "rest_backend_lambda_permission" {
+resource "aws_lambda_permission" "rest_backend_lambda_api_gateway_permission" {
   statement_id  = "AllowAPIGatewayInvokeRestBackend"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.rest_backend_lambda.function_name
   principal     = "apigateway.amazonaws.com"
 
-  # Depends on the API Gateway deployment to exist before permission is granted
   source_arn = "${aws_api_gateway_rest_api.var_rest_backend.execution_arn}/*/*"
 }
 
 resource "aws_iam_role_policy_attachment" "rest_backend_lambda_dynamodb_policy_attachment" {
   role       = aws_iam_role.rest_backend_lambda_exec_role.name
   policy_arn = aws_iam_policy.lambda_dynamodb_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "allow_put_events" {
+  role       = aws_iam_role.rest_backend_lambda_exec_role.name
+  policy_arn = aws_iam_policy.allow_put_events.arn
 }
 
 resource "aws_iam_policy" "backend_lambda_logging_policy" {
@@ -80,7 +93,21 @@ resource "aws_iam_policy" "backend_lambda_logging_policy" {
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
-        Resource : "arn:aws:logs:*:*:*"
+        Resource : "arn:aws:logs:*:*:*" // TODO
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "allow_put_events" {
+  name = "backend_lambda_events_policy"
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Action" : "events:PutEvents",
+        "Resource" : var.event_bus_arn
       }
     ]
   })

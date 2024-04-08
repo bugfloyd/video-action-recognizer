@@ -10,3 +10,6 @@ export const cloudFrontPrivateKeySecretName: string =
 
 export const cloudfrontDistributionDomain: string =
   process.env.CLOUDFRONT_DISTRIBUTION_DOMAIN || '';
+
+export const eventBusName: string =
+  process.env.EVENT_BUS_NAME || '';

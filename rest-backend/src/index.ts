@@ -2,7 +2,7 @@ import { VarException } from './exceptions/VarException';
 import {
   cloudfrontDistributionDomain,
   cloudFrontPrivateKeySecretName,
-  cloudFrontPublicKeyId,
+  cloudFrontPublicKeyId, eventBusName,
   userPoolId,
 } from './variables';
 import { awsRegion } from './variables';
@@ -35,6 +35,11 @@ export const handler = async (
 
     if (!cloudFrontPublicKeyId) {
       console.error('ERROR - No CLOUDFRONT_PUBLIC_KEY_ID environment variable found');
+      throw new VarException(globalCases.badConfig);
+    }
+
+    if (!eventBusName) {
+      console.error('ERROR - No EVENT_BUS_NAME environment variable found');
       throw new VarException(globalCases.badConfig);
     }
   };

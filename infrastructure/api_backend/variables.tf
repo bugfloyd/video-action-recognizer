@@ -32,3 +32,13 @@ variable "cloudfront_private_key_secret_arn" {
   description = "CloudFront private key secret ARN for signing URLs"
   type        = string
 }
+
+variable "event_bus_name" {
+  description = "EventBridge bus name"
+  type        = string
+}
+
+variable "event_bus_arn" {
+  description = "EventBridge bus ARN"
+  type        = string
+}

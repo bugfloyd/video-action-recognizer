@@ -10,6 +10,10 @@ locals {
   analysis_core_container_name = "main"
 }
 
+resource "aws_cloudwatch_event_bus" "var_bus" {
+  name = var.event_bus_name
+}
+
 module "api_backend" {
   source = "./api_backend"
 
@@ -20,6 +24,8 @@ module "api_backend" {
   cloudfront_distribution_domain    = aws_cloudfront_distribution.s3_distribution.domain_name
   cloudfront_private_key_secret_arn = var.cloudfront_private_key_arn
   cloudfront_public_key_id          = aws_cloudfront_public_key.main.id
+  event_bus_name                    = aws_cloudwatch_event_bus.var_bus.name
+  event_bus_arn                     = aws_cloudwatch_event_bus.var_bus.arn
 }
 
 output "rest_backend_lambda_exec_role_name" {

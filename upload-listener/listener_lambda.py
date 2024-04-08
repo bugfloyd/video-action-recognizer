@@ -6,6 +6,7 @@ import re
 # Initialize ECS and S3 clients
 ecs_client = boto3.client("ecs")
 s3_client = boto3.client("s3")
+events_client = boto3.client('events')
 
 
 def lambda_handler(event, _):
@@ -33,12 +34,37 @@ def lambda_handler(event, _):
         # Copy the object to the new bucket
         copy_source = {'Bucket': source_bucket_name, 'Key': object_key}
         destination_object_key = object_key.replace("upload/", "files/", 1)
+        dest_key_parts = destination_object_key.split('/')
+        user_id = dest_key_parts[1]
+        filename = dest_key_parts[-1]
+
         s3_client.copy(copy_source, destination_bucket_name, destination_object_key)
         print(f"Object '{object_key}' copied to bucket '{destination_bucket_name}'.")
 
         # Now delete the original object
         s3_client.delete_object(Bucket=source_bucket_name, Key=object_key)
         print(f"Object '{object_key}' deleted from bucket '{source_bucket_name}'.")
+
+        event_payload = {
+            "userId": user_id,
+            "key": destination_object_key,
+            "name": filename
+        }
+
+        event = {
+            'Entries': [
+                {
+                    'Source': 'var.upload_listener',
+                    'DetailType': 'UploadedFileCopied',
+                    'Detail': json.dumps(event_payload),
+                    'EventBusName': 'var-main'
+                }
+            ]
+        }
+
+        # Put the event
+        response = events_client.put_events(**event)
+        print(f"Event published to EventBridge: 'UploadedFileCopied'.", response)
 
         return {
             "statusCode": 200,

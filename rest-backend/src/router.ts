@@ -2,9 +2,6 @@ import { APIGatewayProxyEvent } from 'aws-lambda';
 import { VarException } from './exceptions/VarException';
 import { globalCases } from './exceptions/cases/globalCases';
 import { ServiceRouter } from './types/types';
-import {
-  CreateUserRequest,
-} from './types/user';
 import { UserService } from './services/userService';
 import { FileService } from './services/fileService';
 import { ResultService } from './services/resultService';
@@ -56,7 +53,7 @@ const routeHandlers: RouteDefinition = {
     GET: () => usersService.getUsers(),
     POST: (event: APIGatewayProxyEvent) =>
       usersService.registerUser(
-        parseBody<CreateUserRequest>(event, createUserProps)
+        parseBody(event, createUserProps)
       ),
   },
   '/users/:userId': {
