@@ -2,12 +2,12 @@ import dynamoose from 'dynamoose';
 import { Item } from 'dynamoose/dist/Item';
 import { EntityTimestamps } from '../../types/types';
 
-export interface IResultBase {
+export interface IAnalysisBase {
   pk: string;
   sk: string;
   userId: string;
   fileId: string;
-  resultId: string;
+  analysisId: string;
   data: {
     model: string;
     output: object;
@@ -15,10 +15,10 @@ export interface IResultBase {
   type: string;
 }
 
-export interface IResult extends Item, IResultBase, EntityTimestamps {}
+export interface IAnalysis extends Item, IAnalysisBase, EntityTimestamps {}
 
 // Define a nested schema for your object if needed
-const resultDataSchema = new dynamoose.Schema({
+const analysisDataSchema = new dynamoose.Schema({
   model: String,
   output: Object
 }, {
@@ -26,7 +26,7 @@ const resultDataSchema = new dynamoose.Schema({
 });
 
 // File Model
-const ResultSchema = new dynamoose.Schema(
+const AnalysisSchema = new dynamoose.Schema(
   {
     pk: {
       type: String,
@@ -44,11 +44,11 @@ const ResultSchema = new dynamoose.Schema(
       type: String,
       required: true,
     },
-    resultId: {
+    analysisId: {
       type: String,
       required: true,
     },
-    data: resultDataSchema,
+    data: analysisDataSchema,
     type: {
       type: String,
       index: {
@@ -78,7 +78,7 @@ const ResultSchema = new dynamoose.Schema(
   }
 );
 
-const ResultModel = dynamoose.model<IResult>('VarMain', ResultSchema, {
+const AnalysisModel = dynamoose.model<IAnalysis>('VarMain', AnalysisSchema, {
   create: false,
 });
-export default ResultModel;
+export default AnalysisModel;

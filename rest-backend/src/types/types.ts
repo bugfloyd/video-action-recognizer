@@ -8,3 +8,9 @@ export interface EntityTimestamps {
   createdAt: string;
   updatedAt: string;
 }
+
+export type ParamName = 'userId' | 'fileId' | 'analysisId';
+
+export type PathParams = {
+  [paramName in ParamName]?: string;
+};

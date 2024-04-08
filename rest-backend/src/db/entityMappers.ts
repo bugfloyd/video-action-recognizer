@@ -1,7 +1,7 @@
 import { IFile } from './models/fileModel';
 import { VideoFile } from '../types/videoFile';
-import { ResultAPI } from '../types/result';
-import { IResult } from './models/resultModel';
+import { AnalysisAPI } from '../types/analysis';
+import { IAnalysis } from './models/analysisModel';
 
 export const convertFileDBToVideoFile = (file: IFile): VideoFile => {
   return {
@@ -15,16 +15,16 @@ export const convertFileDBToVideoFile = (file: IFile): VideoFile => {
   };
 };
 
-export const convertResultDBToAPI = (result: IResult): ResultAPI => {
+export const convertAnalysisDBToAPI = (analysis: IAnalysis): AnalysisAPI => {
   return {
-    id: result.resultId,
-    userId: result.userId,
-    fileId: result.fileId,
+    id: analysis.analysisId,
+    userId: analysis.userId,
+    fileId: analysis.fileId,
     data: {
-      model: result.data.model,
-      output: result.data.output,
+      model: analysis.data.model,
+      output: analysis.data.output,
     },
-    createdAt: result.createdAt,
-    updatedAt: result.updatedAt,
+    createdAt: analysis.createdAt,
+    updatedAt: analysis.updatedAt,
   };
 };

@@ -1,20 +1,20 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
 import { VarException } from './exceptions/VarException';
 import { globalCases } from './exceptions/cases/globalCases';
-import { ServiceRouter } from './types/types';
+import { ParamName, PathParams, ServiceRouter } from './types/types';
 import { UserService } from './services/userService';
 import { FileService } from './services/fileService';
-import { ResultService } from './services/resultService';
+import { AnalysisService } from './services/analysisService';
 import {
-  createFileRequestProps, createResultRequestProps,
+  createFileRequestProps, createAnalysisRequestProps,
   createUserProps,
-  generateUploadSignedUrlRequestParams, updateFileRequestProps, updateResultRequestProps,
+  generateUploadSignedUrlRequestParams, updateFileRequestProps, updateAnalysisRequestProps,
   updateUserProps,
 } from './allowedBodyParamas';
 
 const usersService = new UserService();
 const fileService = new FileService();
-const resultService = new ResultService();
+const analysisService = new AnalysisService();
 
 type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
@@ -105,49 +105,46 @@ const routeHandlers: RouteDefinition = {
       ),
   },
 
-  '/results': {
-    GET: () => resultService.getResults(),
+  '/analysis': {
+    GET: () => analysisService.getAllAnalysis(),
   },
-  '/results/:userId/:fileId': {
+  '/analysis/:userId/:fileId': {
     POST: (event, pathParams) =>
-      resultService.createResult(
+      analysisService.createAnalysis(
         getParam(pathParams, 'userId'),
         getParam(pathParams, 'fileId'),
-        parseBody(event, createResultRequestProps)
+        parseBody(event, createAnalysisRequestProps)
       ),
     GET: (_event, pathParams) =>
-      resultService.getFileResults(
+      analysisService.getFileAnalysis(
         getParam(pathParams, 'userId'),
         getParam(pathParams, 'fileId')
       ),
   },
-  '/results/:userId/:fileId/:resultId': {
+  '/analysis/:userId/:fileId/:analysisId': {
     GET: (_event, pathParams) =>
-      resultService.getResult(
+      analysisService.getAnalysis(
         getParam(pathParams, 'userId'),
         getParam(pathParams, 'fileId'),
-        getParam(pathParams, 'resultId')
+        getParam(pathParams, 'analysisId')
       ),
     PATCH: (event, pathParams) =>
-      resultService.updateResult(
+      analysisService.updateAnalysis(
         getParam(pathParams, 'userId'),
         getParam(pathParams, 'fileId'),
-        getParam(pathParams, 'resultId'),
-        parseBody(event, updateResultRequestProps)
+        getParam(pathParams, 'analysisId'),
+        parseBody(event, updateAnalysisRequestProps)
       ),
     DELETE: (_event, pathParams) =>
-      resultService.deleteResult(
+      analysisService.deleteAnalysis(
         getParam(pathParams, 'userId'),
         getParam(pathParams, 'fileId'),
-        getParam(pathParams, 'resultId')
+        getParam(pathParams, 'analysisId')
       ),
   },
 };
 
-type ParamName = 'userId' | 'fileId' | 'resultId';
-type PathParams = {
-  [paramName in ParamName]?: string;
-};
+
 
 const getParam = (pathParams: PathParams, paramName: ParamName): string => {
   if (pathParams[paramName]) {
@@ -164,7 +161,7 @@ const readPath = (event: APIGatewayProxyEvent): [string, PathParams] => {
     return [routeKey, params];
   }
 
-  const paramNames: ParamName[] = ['userId', 'fileId', 'resultId'];
+  const paramNames: ParamName[] = ['userId', 'fileId', 'analysisId'];
   for (const param of paramNames) {
     const paramValue = event.pathParameters[param];
     if (paramValue) {

@@ -1,4 +1,4 @@
-export interface ResultAPI {
+export interface AnalysisAPI {
   id: string;
   userId: string;
   fileId: string;
@@ -10,14 +10,14 @@ export interface ResultAPI {
   updatedAt: string;
 }
 
-export interface CreateResultRequest {
+export interface CreateAnalysisRequest {
   data: {
     model: string;
     output: object;
   };
 }
 
-export interface UpdateResultRequest {
+export interface UpdateAnalysisRequest {
   data?: {
     model: string;
     output: object;

@@ -41,14 +41,14 @@ class FileRepository {
   async getAllFiles(): Promise<VideoFile[]> {
     const dbFiles: IFile[] = [];
     try {
-      const results: QueryResponse<IFile> = await FileModel.query('type')
+      const files: QueryResponse<IFile> = await FileModel.query('type')
         .eq('FILE')
         .using('TypeGSI')
         .sort('descending')
         .all() // Fetch all records; be cautious with this in production for large datasets
         .exec();
 
-      dbFiles.push(...results);
+      dbFiles.push(...files);
       return dbFiles.map((dbFile) => convertFileDBToVideoFile(dbFile));
     } catch (e) {
       throw new VarException(fileCases.getFiles.FailedToQueryFiles, e);
@@ -58,14 +58,14 @@ class FileRepository {
   async getUserFiles(userId: string): Promise<VideoFile[]> {
     const dbFiles: IFile[] = [];
     try {
-      const results: QueryResponse<IFile> = await FileModel.query('pk')
+      const files: QueryResponse<IFile> = await FileModel.query('pk')
         .eq(`FILE#${userId}`)
         .using('DateLSI')
         .sort('descending')
         .all() // Fetch all records; be cautious with this in production for large datasets
         .exec();
 
-      dbFiles.push(...results);
+      dbFiles.push(...files);
       return dbFiles.map((dbFile) => convertFileDBToVideoFile(dbFile));
     } catch (e) {
       throw new VarException(fileCases.getUserFiles.FailedToQueryFiles, e);

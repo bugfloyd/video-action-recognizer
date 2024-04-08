@@ -1,6 +1,6 @@
-export const resultCases = {
-  createResult: {
-    createResultMissingParams: {
+export const analysisCases = {
+  createAnalysis: {
+    createAnalysisMissingParams: {
       code: 400,
       message: 'Model and output are required.',
     },
@@ -26,40 +26,26 @@ export const resultCases = {
     },
     FailedToCreateRef: {
       code: 500,
-      message: 'Failed to create the result reference.',
+      message: 'Failed to create the analysis reference.',
     },
   },
-  getResults: {
-    FailedToQueryResults: {
+  getAnalysisList: {
+    FailedToQueryAnalysis: {
       code: 500,
-      message: 'Failed to query results.',
+      message: 'Failed to query analysis.',
     },
   },
-  getUserResults: {
+  getUserAnalysis: {
     InvalidUserId: {
       code: 400,
       message: 'The provided user ID is not valid or does not exist.',
     },
-    FailedToQueryResults: {
+    FailedToQueryAnalysis: {
       code: 500,
-      message: 'Failed to query results.',
+      message: 'Failed to query analysis.',
     },
   },
-  getFileResults: {
-    InvalidUserId: {
-      code: 400,
-      message: 'The provided user ID is not valid or does not exist.',
-    },
-    InvalidFileId: {
-      code: 400,
-      message: 'The provided file ID is not valid or does not exist.',
-    },
-    FailedToQueryResults: {
-      code: 500,
-      message: 'Failed to query results.',
-    },
-  },
-  getResult: {
+  getFileAnalysis: {
     InvalidUserId: {
       code: 400,
       message: 'The provided user ID is not valid or does not exist.',
@@ -68,37 +54,51 @@ export const resultCases = {
       code: 400,
       message: 'The provided file ID is not valid or does not exist.',
     },
-    FailedToQueryResult: {
+    FailedToQueryAnalysis: {
       code: 500,
-      message: 'Failed to query result.',
+      message: 'Failed to query analysis.',
+    },
+  },
+  getAnalysis: {
+    InvalidUserId: {
+      code: 400,
+      message: 'The provided user ID is not valid or does not exist.',
+    },
+    InvalidFileId: {
+      code: 400,
+      message: 'The provided file ID is not valid or does not exist.',
+    },
+    FailedToQueryAnalysis: {
+      code: 500,
+      message: 'Failed to query analysis.',
     },
     NotFound: {
       code: 404,
-      message: 'The requested result not found.',
+      message: 'The requested analysis not found.',
     },
   },
-  updateResult: {
-    updateResultMissingParams: {
+  updateAnalysis: {
+    updateAnalysisMissingParams: {
       code: 400,
       message: 'Model and output are required.',
     },
-    FailedToUpdateResult: {
+    FailedToUpdateAnalysis: {
       code: 500,
-      message: 'Failed to update the requested result.',
+      message: 'Failed to update the requested analysis.',
     },
     NotFound: {
       code: 404,
-      message: 'The requested result not found.',
+      message: 'The requested analysis not found.',
     },
   },
-  deleteResult: {
-    FailedToDeleteResult: {
+  deleteAnalysis: {
+    FailedToDeleteAnalysis: {
       code: 500,
-      message: 'Failed to delete the requested result.',
+      message: 'Failed to delete the requested analysis.',
     },
     NotFound: {
       code: 404,
-      message: 'The requested result not found.',
+      message: 'The requested analysis not found.',
     },
   },
 } as const;

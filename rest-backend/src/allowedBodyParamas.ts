@@ -1,5 +1,5 @@
 import { CreateUserRequest, UpdateUserRequest } from './types/user';
-import { CreateResultRequest, UpdateResultRequest } from './types/result';
+import { CreateAnalysisRequest, UpdateAnalysisRequest } from './types/analysis';
 import { CreateVideoFileRequest, GenerateUploadSignedUrlRequest, UpdateVideoFileRequest } from './types/videoFile';
 
 export const createUserProps: Array<keyof CreateUserRequest> = [
@@ -29,10 +29,10 @@ export const generateUploadSignedUrlRequestParams: Array<
   keyof GenerateUploadSignedUrlRequest
 > = ['key'];
 
-export const createResultRequestProps: Array<keyof CreateResultRequest> = [
+export const createAnalysisRequestProps: Array<keyof CreateAnalysisRequest> = [
   'data',
 ];
 
-export const updateResultRequestProps: Array<keyof UpdateResultRequest> = [
+export const updateAnalysisRequestProps: Array<keyof UpdateAnalysisRequest> = [
   'data',
 ];
