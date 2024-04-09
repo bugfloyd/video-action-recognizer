@@ -67,6 +67,26 @@ resource "aws_ecs_task_definition" "analysis_core_task" {
           value = ""
         },
         {
+          name  = "USER_ID",
+          value = ""
+        },
+        {
+          name  = "FILE_ID",
+          value = ""
+        },
+        {
+          name  = "ANALYSIS_ID",
+          value = ""
+        },
+        {
+          name  = "MODEL_NAME",
+          value = ""
+        },
+        {
+          name  = "EVENT_BUS_NAME",
+          value = aws_cloudwatch_event_bus.var_bus.name
+        },
+        {
           name  = "S3_REGION",
           value = var.aws_region
         },
@@ -136,4 +156,8 @@ resource "aws_iam_policy" "analysis_core_s3_access" {
 resource "aws_iam_role_policy_attachment" "analysis_core_s3_access_attachment" {
   role       = aws_iam_role.analysis_core_ecs_task_role.name
   policy_arn = aws_iam_policy.analysis_core_s3_access.arn
+}
+resource "aws_iam_role_policy_attachment" "analysis_core_events_access_attachment" {
+  role       = aws_iam_role.analysis_core_ecs_task_role.name
+  policy_arn = aws_iam_policy.allow_put_events.arn
 }

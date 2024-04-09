@@ -4,6 +4,10 @@ export const analysisCases = {
       code: 400,
       message: 'Model and output are required.',
     },
+    UserNotFound: {
+      code: 404,
+      message: 'User not found.',
+    },
     FileNotFound: {
       code: 404,
       message: 'File not found.',

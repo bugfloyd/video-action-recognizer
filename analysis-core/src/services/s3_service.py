@@ -34,13 +34,11 @@ def download_video(bucket, video_key):
         logger.log_error("S3: {}".format(error))
 
 
-def upload_video(bucket, video_path):
-    output_key = f"output_videos/{os.path.basename(video_path)}"
-
+def upload_video(bucket, s3_key, video_path):
     try:
-        s3_client.upload_file(video_path, bucket, output_key)
-        logger.log_info(f"File uploaded: {bucket}/{output_key}")
-        return output_key
+        s3_client.upload_file(video_path, bucket, s3_key)
+        logger.log_info(f"File uploaded: {bucket}/{s3_key}")
+        return s3_key
 
     except Exception as error:
         logger.log_error("S3: {}".format(error))

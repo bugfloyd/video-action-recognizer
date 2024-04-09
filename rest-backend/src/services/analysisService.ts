@@ -11,6 +11,10 @@ import fileRepository from '../repositories/fileRepository';
 import { putEvent } from '../aws/events';
 import { eventTypes } from '../events';
 import { VideoFile } from '../types/videoFile';
+import { APIUser } from '../types/user';
+import { UserService } from './userService';
+
+const usersService = new UserService();
 
 export class AnalysisService {
   async createAnalysis(
@@ -25,6 +29,14 @@ export class AnalysisService {
         analysisCases.createAnalysis.createAnalysisMissingParams
       );
     }
+
+    let user: APIUser;
+    try {
+      user = await usersService.getUser(userId);
+    } catch (e) {
+      throw new VarException(analysisCases.createAnalysis.UserNotFound);
+    }
+
     let file: VideoFile;
     try {
       file = await fileRepository.getFile(userId, fileId);
@@ -43,6 +55,7 @@ export class AnalysisService {
     );
 
     const putEventResponse = await putEvent(eventTypes.ANALYSIS_REF_CREATED, {
+      user: user,
       file: file,
       analysis: createdAnalysis,
     });
@@ -82,7 +95,7 @@ export class AnalysisService {
     params: Partial<UpdateAnalysisRequest>
   ): Promise<AnalysisAPI> {
     const { data } = params;
-    if ((data && !data.model) || !data?.output) {
+    if (!data?.model || !data?.output) {
       throw new VarException(
         analysisCases.updateAnalysis.updateAnalysisMissingParams
       );

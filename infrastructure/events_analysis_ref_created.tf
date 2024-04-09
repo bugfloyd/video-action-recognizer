@@ -7,7 +7,7 @@ resource "aws_cloudwatch_event_rule" "analysis_ref_created" {
   })
 }
 
-resource "aws_cloudwatch_event_target" "analysis_ref_created" {
+resource "aws_cloudwatch_event_target" "analyze_video" {
   rule           = aws_cloudwatch_event_rule.analysis_ref_created.name
   event_bus_name = aws_cloudwatch_event_bus.var_bus.name
   target_id      = "RunVideoAnalysisECSTask"
@@ -27,7 +27,11 @@ resource "aws_cloudwatch_event_target" "analysis_ref_created" {
 
   input_transformer {
     input_paths = {
+      userId: "$.detail.user.username"
+      fileId: "$.detail.file.id"
+      analysisId: "$.detail.analysis.id"
       fileKey : "$.detail.file.key"
+      modelName: "$.detail.analysis.data.model"
     }
     input_template = <<EOF
 {
@@ -36,8 +40,24 @@ resource "aws_cloudwatch_event_target" "analysis_ref_created" {
       "name": "${local.analysis_core_container_name}",
       "environment": [
         {
+          "name": "USER_ID",
+          "value": "<userId>"
+        },
+        {
+          "name": "FILE_ID",
+          "value": "<fileId>"
+        },
+        {
+          "name": "ANALYSIS_ID",
+          "value": "<analysisId>"
+        },
+        {
           "name": "INPUT_VIDEO_S3_KEY",
           "value": "<fileKey>"
+        },
+        {
+          "name": "MODEL_NAME",
+          "value": "<modelName>"
         }
       ]
     }

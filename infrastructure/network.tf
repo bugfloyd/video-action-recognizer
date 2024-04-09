@@ -145,6 +145,18 @@ resource "aws_vpc_endpoint" "cloudwatch_monitoring" {
   }
 }
 
+resource "aws_vpc_endpoint" "events" {
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.${var.aws_region}.events"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = [aws_subnet.private_subnet_az1.id, aws_subnet.private_subnet_az2.id]
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  private_dns_enabled = true
+  tags = {
+    Name = "EventsVpcEndpoint"
+  }
+}
+
 resource "aws_security_group" "vpc_endpoints" {
   # name        = "vpc-endpoints-sg"
   description = "Security Group for VPC Endpoints"

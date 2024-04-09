@@ -54,7 +54,7 @@ class VideoPredictor:
             hub_path = cache_path
         else:
             logger.log_warning(
-                f"Couln't find the model {model_mode} in cache. Loading from TF hub."
+                f"Couldn't find the model {model_mode} in cache. Loading from TF hub."
             )
             hub_path = f"https://tfhub.dev/tensorflow/movinet/{model_id}/{model_mode}/kinetics-600/classification/{hub_version}"
 
