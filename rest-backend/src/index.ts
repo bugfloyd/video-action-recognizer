@@ -64,6 +64,7 @@ export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
   try {
+    console.log('event', event);
     validateSystemConfig();
     return await appRouter(event);
   } catch (error) {
