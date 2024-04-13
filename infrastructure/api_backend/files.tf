@@ -30,6 +30,7 @@ resource "aws_api_gateway_method" "post_file" {
   http_method   = "POST"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 resource "aws_api_gateway_method" "generate_signed_url" {
@@ -38,6 +39,7 @@ resource "aws_api_gateway_method" "generate_signed_url" {
   http_method   = "POST"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 resource "aws_api_gateway_method" "get_files" {
@@ -46,6 +48,7 @@ resource "aws_api_gateway_method" "get_files" {
   http_method   = "GET"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 resource "aws_api_gateway_method" "get_user_files" {
@@ -54,6 +57,7 @@ resource "aws_api_gateway_method" "get_user_files" {
   http_method   = "GET"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 resource "aws_api_gateway_method" "get_file" {
@@ -62,6 +66,7 @@ resource "aws_api_gateway_method" "get_file" {
   http_method   = "GET"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 resource "aws_api_gateway_method" "patch_file" {
@@ -70,6 +75,7 @@ resource "aws_api_gateway_method" "patch_file" {
   http_method   = "PATCH"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 resource "aws_api_gateway_method" "delete_file" {
@@ -78,6 +84,7 @@ resource "aws_api_gateway_method" "delete_file" {
   http_method   = "DELETE"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 # API Gateway Lambda Integrations

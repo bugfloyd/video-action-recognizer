@@ -72,6 +72,10 @@ resource "aws_cognito_resource_server" "main_backend" {
   user_pool_id = aws_cognito_user_pool.main.id
   identifier   = "https://var.bugfloyd.com"
   name         = "VAR backend"
+  scope {
+    scope_description = "Allow user to use VAR"
+    scope_name        = "use:var"
+  }
 }
 
 
@@ -81,7 +85,7 @@ resource "aws_cognito_user_pool_client" "main" {
   generate_secret                      = false
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_flows                  = ["code"]
-  allowed_oauth_scopes                 = ["openid", "email", "profile"]
+  allowed_oauth_scopes                 = ["openid", "email", "profile", "https://var.bugfloyd.com/use:var"]
   callback_urls                        = ["http://localhost"]
   logout_urls                          = ["http://localhost"]
   explicit_auth_flows = [
@@ -89,6 +93,9 @@ resource "aws_cognito_user_pool_client" "main" {
     "ALLOW_REFRESH_TOKEN_AUTH"
   ]
   supported_identity_providers = ["COGNITO"]
+  access_token_validity = 24
+  id_token_validity = 24
+  prevent_user_existence_errors = "ENABLED"
 }
 
 # Create Admin Group in Cognito

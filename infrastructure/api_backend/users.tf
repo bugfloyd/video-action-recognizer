@@ -18,6 +18,7 @@ resource "aws_api_gateway_method" "get_users" {
   http_method   = "GET"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 resource "aws_api_gateway_method" "post_user" {
@@ -26,6 +27,7 @@ resource "aws_api_gateway_method" "post_user" {
   http_method   = "POST"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 resource "aws_api_gateway_method" "get_user" {
@@ -34,6 +36,7 @@ resource "aws_api_gateway_method" "get_user" {
   http_method   = "GET"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 resource "aws_api_gateway_method" "patch_user" {
@@ -42,6 +45,7 @@ resource "aws_api_gateway_method" "patch_user" {
   http_method   = "PATCH"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 resource "aws_api_gateway_method" "delete_user" {
@@ -50,6 +54,7 @@ resource "aws_api_gateway_method" "delete_user" {
   http_method   = "DELETE"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 # API Gateway Lambda Integrations

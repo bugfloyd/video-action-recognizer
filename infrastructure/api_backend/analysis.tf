@@ -30,6 +30,7 @@ resource "aws_api_gateway_method" "post_analysis" {
   http_method   = "POST"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 resource "aws_api_gateway_method" "get_all_analysis" {
@@ -38,6 +39,7 @@ resource "aws_api_gateway_method" "get_all_analysis" {
   http_method   = "GET"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 #resource "aws_api_gateway_method" "get_user_analysis" {
@@ -46,6 +48,7 @@ resource "aws_api_gateway_method" "get_all_analysis" {
 #  http_method   = "GET"
 #  authorization = "COGNITO_USER_POOLS"
 #  authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+#  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 #}
 
 resource "aws_api_gateway_method" "get_file_analysis" {
@@ -54,6 +57,7 @@ resource "aws_api_gateway_method" "get_file_analysis" {
   http_method   = "GET"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 resource "aws_api_gateway_method" "get_analysis" {
@@ -62,6 +66,7 @@ resource "aws_api_gateway_method" "get_analysis" {
   http_method   = "GET"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 resource "aws_api_gateway_method" "patch_analysis" {
@@ -70,6 +75,7 @@ resource "aws_api_gateway_method" "patch_analysis" {
   http_method   = "PATCH"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 resource "aws_api_gateway_method" "delete_analysis" {
@@ -78,6 +84,7 @@ resource "aws_api_gateway_method" "delete_analysis" {
   http_method   = "DELETE"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.var_cognito_authorizer.id
+  authorization_scopes = ["https://var.bugfloyd.com/use:var"]
 }
 
 # API Gateway Lambda Integrations
