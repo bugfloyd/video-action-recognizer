@@ -36,6 +36,6 @@ export const appRouter: AppRouter = async (event: APIGatewayProxyEvent) => {
 
   return {
     statusCode: 200,
-    body: JSON.stringify(await handler(body, pathParameters)),
+    body: JSON.stringify(await handler(pathParameters, body, queryStringParameters)),
   };
 };

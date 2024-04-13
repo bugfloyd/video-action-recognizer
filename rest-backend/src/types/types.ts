@@ -1,5 +1,8 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { APIGatewayProxyEventPathParameters } from 'aws-lambda/trigger/api-gateway-proxy';
+import {
+  APIGatewayProxyEventPathParameters,
+  APIGatewayProxyEventQueryStringParameters,
+} from 'aws-lambda/trigger/api-gateway-proxy';
 import { APIUser } from './user';
 import { GenerateUploadSignedUrlResponse, VideoFile } from './videoFile';
 import { AnalysisAPI } from './analysis';
@@ -7,8 +10,9 @@ import { AnalysisAPI } from './analysis';
 export type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
 export type RouteHandler = (
+  pathParams: APIGatewayProxyEventPathParameters | null,
   body: string | null,
-  pathParams: APIGatewayProxyEventPathParameters | null
+  queryStringParameters : APIGatewayProxyEventQueryStringParameters | null,
 ) => Promise<
   | APIUser
   | APIUser[]
@@ -36,3 +40,8 @@ export interface EntityTimestamps {
 }
 
 export type PathParameterName = 'userId' | 'fileId' | 'analysisId';
+
+export interface GenerateSignedUrlResponse {
+  url: string;
+  expiration: number;
+}

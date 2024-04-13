@@ -61,7 +61,7 @@ export class FileService {
       createFileParams
     );
     const putEventResponse = await putEvent(eventTypes.FILE_REF_CREATED, {
-      file: createdFile
+      file: createdFile,
     });
     console.log(
       `Event created: ${eventTypes.FILE_REF_CREATED}`,
@@ -81,11 +81,30 @@ export class FileService {
     return fileRepository.getUserFiles(userId);
   }
 
-  async getFile(userId: string, fileId: string): Promise<VideoFile> {
+  async getFile(
+    userId: string,
+    fileId: string,
+    signUrl?: string
+  ): Promise<VideoFile> {
     if (!validateUserId(userId)) {
       throw new VarException(fileCases.getFile.InvalidUserId);
     }
-    return fileRepository.getFile(userId, fileId);
+    const file = await fileRepository.getFile(userId, fileId);
+
+    if (signUrl === 'true') {
+      try {
+        const expiration = new Date();
+        expiration.setHours(expiration.getHours() + 12);
+        file.signedUrl = await generateSignedUrl(file.key, expiration);
+      } catch (e) {
+        throw new VarException(
+          fileCases.getFile.FailedToGenerateUrl,
+          e
+        );
+      }
+    }
+
+    return file;
   }
 
   async updateFile(
@@ -106,16 +125,26 @@ export class FileService {
     return 'deleted';
   }
 
-  generateSignedUrl(
+  generateUploadSignedUrl(
     userId: string,
     requestBody: Partial<GenerateUploadSignedUrlRequest>
   ): Promise<GenerateUploadSignedUrlResponse> {
     const { key } = requestBody;
     if (!key || !isValidS3ObjectName(key)) {
-      throw new VarException(fileCases.generateSignedUrl.InvalidKey);
+      throw new VarException(fileCases.generateUploadSignedUrl.InvalidKey);
     }
     const sanitizedKey = key.replace(' ', '_');
     const finalKey = `upload/${userId}/${sanitizedKey}`;
-    return generateSignedUrl(finalKey);
+    const expiration = new Date();
+    expiration.setMinutes(expiration.getMinutes() + 30);
+
+    try {
+      return generateSignedUrl(finalKey, expiration);
+    } catch (e) {
+      throw new VarException(
+        fileCases.generateUploadSignedUrl.FailedToGenerateUrl,
+        e
+      );
+    }
   }
 }

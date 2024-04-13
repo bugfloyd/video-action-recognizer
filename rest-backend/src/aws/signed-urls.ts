@@ -9,9 +9,7 @@ import {
   cloudFrontPrivateKeySecretName,
   cloudFrontPublicKeyId,
 } from '../variables';
-import { GenerateUploadSignedUrlResponse } from '../types/videoFile';
-import { VarException } from '../exceptions/VarException';
-import { fileCases } from '../exceptions/cases/fileCases';
+import { GenerateSignedUrlResponse } from '../types/types';
 
 // Initialize the AWS Secrets Manager client
 const secretsManagerClient = new SecretsManagerClient({
@@ -29,31 +27,24 @@ async function getSecretValue(secretName: string): Promise<string> {
 
 // Generate the signed URL
 export const generateSignedUrl = async (
-  s3Key: string
-): Promise<GenerateUploadSignedUrlResponse> => {
-  try {
-    // Fetch the private key and key pair ID from AWS Secrets Manager
-    const privateKey = await getSecretValue(cloudFrontPrivateKeySecretName);
+  s3Key: string,
+  expirationDate: Date
+): Promise<GenerateSignedUrlResponse> => {
+  // Fetch the private key and key pair ID from AWS Secrets Manager
+  const privateKey = await getSecretValue(cloudFrontPrivateKeySecretName);
 
-    // Define the URL to sign
-    const resourceUrl = `https://${cloudfrontDistributionDomain}/${s3Key}`;
+  // Define the URL to sign
+  const resourceUrl = `https://${cloudfrontDistributionDomain}/${s3Key}`;
 
-    // Define the expiration time (3 hours from now)
-    const expiration = new Date();
-    expiration.setHours(expiration.getHours() + 3);
+  const signedUrl = getSignedUrl({
+    url: resourceUrl,
+    dateLessThan: expirationDate.toISOString(),
+    keyPairId: cloudFrontPublicKeyId,
+    privateKey,
+  });
 
-    const signedUrl = getSignedUrl({
-      url: resourceUrl,
-      dateLessThan: expiration.toISOString(),
-      keyPairId: cloudFrontPublicKeyId,
-      privateKey,
-    });
-
-    return {
-      url: signedUrl,
-      expiration: expiration.getTime(),
-    };
-  } catch (e) {
-    throw new VarException(fileCases.generateSignedUrl.FailedToGenerateUrl, e);
-  }
+  return {
+    url: signedUrl,
+    expiration: expirationDate.getTime(),
+  };
 };

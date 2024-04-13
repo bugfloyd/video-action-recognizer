@@ -50,6 +50,10 @@ export const fileCases = {
       code: 404,
       message: 'The requested file not found.',
     },
+    FailedToGenerateUrl: {
+      code: 500,
+      message: 'Failed to generate the requested signed URL.',
+    },
   },
   updateFile: {
     InvalidName: {
@@ -75,7 +79,7 @@ export const fileCases = {
       message: 'The requested file not found.',
     },
   },
-  generateSignedUrl: {
+  generateUploadSignedUrl: {
     InvalidKey: {
       code: 400,
       message: 'The provided key is not valid!',

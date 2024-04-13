@@ -1,4 +1,7 @@
-import { APIGatewayProxyEventPathParameters } from 'aws-lambda/trigger/api-gateway-proxy';
+import {
+  APIGatewayProxyEventPathParameters,
+  APIGatewayProxyEventQueryStringParameters,
+} from 'aws-lambda/trigger/api-gateway-proxy';
 import { PathParameterName } from './types/types';
 import { VarException } from './exceptions/VarException';
 import { globalCases } from './exceptions/cases/globalCases';
@@ -11,6 +14,15 @@ export const getPathParam = (
     return <string>pathParams[paramName];
   }
   throw new VarException(globalCases.invalidPathParams);
+};
+
+export const getQueryParam = (
+  queryParams: APIGatewayProxyEventQueryStringParameters | null,
+  paramName: string
+): string | undefined => {
+  if (queryParams && queryParams[paramName]) {
+    return <string>queryParams[paramName];
+  }
 };
 
 export const parseBody = <T>(
@@ -58,4 +70,4 @@ export const isValidS3ObjectName = (key: string) => {
   // This pattern is quite permissive, but ensures there is a dot followed by one or more characters for the extension
   const regex = /^[\w\s\p{L}!_.*'()-]+\.+[\w\p{L}]{1,5}$/u;
   return regex.test(key);
-}
+};
