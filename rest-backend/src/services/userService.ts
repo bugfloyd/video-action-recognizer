@@ -20,7 +20,7 @@ function validateEmail(email: string): boolean {
 }
 
 export class UserService {
-  async registerUser(params: Partial<CreateUserRequest>): Promise<APIUser> {
+  async postUser(params: Partial<CreateUserRequest>): Promise<APIUser> {
     const { email, given_name, family_name } = params;
 
     if (!email || !given_name) {

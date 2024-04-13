@@ -12,14 +12,16 @@ export const appRouter: AppRouter = async (event: APIGatewayProxyEvent) => {
     queryStringParameters,
     httpMethod,
     body,
-    requestContext: {
-      identity: { sourceIp },
-    },
+    requestContext
   } = event;
 
   console.log('path', path);
   console.log('queryStringParameters', queryStringParameters);
-  console.log('sourceIp', sourceIp);
+
+  if (requestContext && requestContext.identity) {
+    const {identity: { sourceIp }} = requestContext;
+    console.log('sourceIp', sourceIp);
+  }
 
   const routes: RouteDefinition = {
     ...userRoutes,

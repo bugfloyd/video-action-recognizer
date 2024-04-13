@@ -18,7 +18,7 @@ const analysisService = new AnalysisService();
 export const userRoutes: RouteDefinition = {
   '/users': {
     GET: () => usersService.getUsers(),
-    POST: (body) => usersService.registerUser(parseBody(body, createUserProps)),
+    POST: (body) => usersService.postUser(parseBody(body, createUserProps)),
   },
   '/users/{userId}': {
     GET: (_body, pathParams) =>
@@ -32,6 +32,7 @@ export const userRoutes: RouteDefinition = {
       usersService.deleteUser(getPathParam(pathParams, 'userId')),
   },
 };
+
 export const fileRoutes: RouteDefinition = {
   '/files': {
     GET: () => fileService.getFiles(),

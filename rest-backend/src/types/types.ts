@@ -1,12 +1,24 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { APIGatewayProxyEventPathParameters } from 'aws-lambda/trigger/api-gateway-proxy';
+import { APIUser } from './user';
+import { GenerateUploadSignedUrlResponse, VideoFile } from './videoFile';
+import { AnalysisAPI } from './analysis';
 
 export type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
 export type RouteHandler = (
   body: string | null,
   pathParams: APIGatewayProxyEventPathParameters | null
-) => Promise<object | 'deleted'>;
+) => Promise<
+  | APIUser
+  | APIUser[]
+  | VideoFile
+  | VideoFile[]
+  | AnalysisAPI
+  | AnalysisAPI[]
+  | GenerateUploadSignedUrlResponse
+  | 'deleted'
+>;
 
 export interface RouteDefinition {
   [pattern: string]: {
