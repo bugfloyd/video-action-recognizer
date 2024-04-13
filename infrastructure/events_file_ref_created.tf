@@ -20,6 +20,7 @@ resource "aws_cloudwatch_event_target" "create_analysis_ref_base" {
     }
     input_template = <<EOF
 {
+  "resource": "/analysis/{userId}/{fileId}",
   "path": "/analysis/<userId>/<fileId>",
   "httpMethod": "POST",
   "pathParameters": {
@@ -45,6 +46,7 @@ resource "aws_cloudwatch_event_target" "create_analysis_ref_stream" {
     }
     input_template = <<EOF
 {
+  "resource": "/analysis/{userId}/{fileId}",
   "path": "/analysis/<userId>/<fileId>",
   "httpMethod": "POST",
   "pathParameters": {

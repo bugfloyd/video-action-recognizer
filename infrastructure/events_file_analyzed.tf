@@ -23,6 +23,7 @@ resource "aws_cloudwatch_event_target" "update_analysis_ref" {
     }
     input_template = <<EOF
 {
+  "resource": "/analysis/{userId}/{fileId}/{analysisId}",
   "path": "/analysis/<userId>/<fileId>/<analysisId>",
   "httpMethod": "PATCH",
   "pathParameters": {

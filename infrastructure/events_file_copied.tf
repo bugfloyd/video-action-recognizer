@@ -21,6 +21,7 @@ resource "aws_cloudwatch_event_target" "request_file_ref_creation" {
     }
     input_template = <<EOF
 {
+  "resource": "/files/{userId}",
   "path": "/files/<userId>",
   "httpMethod": "POST",
   "pathParameters": {
