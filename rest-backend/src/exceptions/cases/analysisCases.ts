@@ -80,6 +80,10 @@ export const analysisCases = {
       code: 404,
       message: 'The requested analysis not found.',
     },
+    FailedToGenerateUrl: {
+      code: 500,
+      message: 'Failed to generate the requested signed URL.',
+    },
   },
   updateAnalysis: {
     updateAnalysisMissingParams: {

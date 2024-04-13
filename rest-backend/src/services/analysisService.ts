@@ -13,6 +13,7 @@ import { eventTypes } from '../events';
 import { VideoFile } from '../types/videoFile';
 import { APIUser } from '../types/user';
 import { UserService } from './userService';
+import { generateSignedUrl } from '../aws/signed-urls';
 
 const usersService = new UserService();
 
@@ -70,7 +71,10 @@ export class AnalysisService {
     return analysisRepository.getAllAnalysis();
   }
 
-  async getFileAnalysis(userId: string, fileId: string): Promise<AnalysisAPI[]> {
+  async getFileAnalysis(
+    userId: string,
+    fileId: string
+  ): Promise<AnalysisAPI[]> {
     if (!validateUserId(userId)) {
       throw new VarException(analysisCases.getFileAnalysis.InvalidUserId);
     }
@@ -80,12 +84,39 @@ export class AnalysisService {
   async getAnalysis(
     userId: string,
     fileId: string,
-    analysisId: string
+    analysisId: string,
+    signUrl?: string
   ): Promise<AnalysisAPI> {
     if (!validateUserId(userId)) {
       throw new VarException(analysisCases.getAnalysis.InvalidUserId);
     }
-    return analysisRepository.getAnalysis(userId, fileId, analysisId);
+    const analysis = await analysisRepository.getAnalysis(
+      userId,
+      fileId,
+      analysisId
+    );
+
+    if (
+      signUrl === 'true' &&
+      analysis.data.output &&
+      analysis.data.output.output_file_path
+    ) {
+      try {
+        const expiration = new Date();
+        expiration.setHours(expiration.getHours() + 12);
+        analysis.data.output.signedUrl = await generateSignedUrl(
+          analysis.data.output.output_file_path,
+          expiration
+        );
+      } catch (e) {
+        throw new VarException(
+          analysisCases.getAnalysis.FailedToGenerateUrl,
+          e
+        );
+      }
+    }
+
+    return analysis;
   }
 
   async updateAnalysis(

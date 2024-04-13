@@ -95,11 +95,12 @@ export const analysisRoutes: RouteDefinition = {
       ),
   },
   '/analysis/{userId}/{fileId}/{analysisId}': {
-    GET: (pathParams) =>
+    GET: (pathParams, _body, queryStringParameters) =>
       analysisService.getAnalysis(
         getPathParam(pathParams, 'userId'),
         getPathParam(pathParams, 'fileId'),
-        getPathParam(pathParams, 'analysisId')
+        getPathParam(pathParams, 'analysisId'),
+        getQueryParam(queryStringParameters, 'signUrl')
       ),
     PATCH: (pathParams, body) =>
       analysisService.updateAnalysis(
